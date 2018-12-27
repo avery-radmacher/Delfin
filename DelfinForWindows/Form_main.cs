@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812252230
+﻿// Author Avery Radmacher 201812271826
 // Project Delfin for Windows
 
 using System;
@@ -13,7 +13,7 @@ namespace DelfinForWindows
     {
         OPEN,
         ENCRYPT,
-        DECRYPT
+        DECRYPT,
     }
 
     public partial class Form_main : Form
@@ -651,7 +651,7 @@ namespace DelfinForWindows
                 return false;
             }
         }
-
+        
         private bool Encrypt(String imgName, String fileName, byte[] password)
         {
             long pixScan = 0, byteScan = -4, fileSize;
