@@ -1,0 +1,11 @@
+﻿--- Previous changes not logged ---
+0.2.4 minor feature update
+Rewrote encrypt/decrypt functions to access I/O discretely in preparation for better exception handling
+0.2.5 minor feature update
+Added info texts for password and feed fields
+Revised password field to reveal on double-click
+0.2.6 minor feature update
+Recovered user interface
+Consolidated code
+0.3 major feature update
+Stabilized encryption & decryption functions
