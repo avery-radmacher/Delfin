@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Author Avery Radmacher 201812301446
 
 namespace DelfinForWindows
 {
+    /// <summary>
+    /// Represents a stream cipher with a 128-bit seed and a very long period.
+    /// </summary>
     class Cipher
     {
-        public static void UnitTest()
-        {
-            byte[] vector = { 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1 };
-            Cipher c = new Cipher(vector);
-            for (int i = 0; i < 1000; i++)
-            {
-                Console.WriteLine(c.GetByte());
-            }
-        }
-
         private readonly int[,] TapCodes = {
             {0x10118,
             0x1011B,
@@ -340,8 +329,8 @@ namespace DelfinForWindows
             0x4004AA,
             0x4004B2} };
 
-        private int[] LFSRs;
-        private int[] SRTaps;
+        private readonly int[] LFSRs;
+        private readonly int[] SRTaps;
 
         /// <summary>
         /// Creates a new cipher from a 128-bit seed.
@@ -351,7 +340,7 @@ namespace DelfinForWindows
         {
             if (initVector.Length != 16)
             {
-                throw new ArgumentException("Initialization vector was not 128 bits");
+                throw new System.ArgumentException("Initialization vector was not 128 bits");
             }
 
             LFSRs = new int[5];
