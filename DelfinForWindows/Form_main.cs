@@ -18,11 +18,11 @@ namespace DelfinForWindows
 
     public partial class Form_main : Form
     {
-        static String VERSION = "0.3";
+        static string VERSION = "0.3.0.1";
 
         MODE mode;
         bool hasImage = false, hasZip = false;
-        String errMsg;
+        string errMsg;
 
         private Button button_encrypt;
         private Button button_decrypt;
@@ -41,21 +41,21 @@ namespace DelfinForWindows
         private SaveFileDialog saveFileDialog_zip;
 
         #region info texts
-        private static String cancelDecryptionInfo = "Cancel the pending decryption.";
-        private static String cancelEncryptionInfo = "Cancel the pending encryption.";
-        private static String decryptionInfo = "Extract the compressed files from an image.";
-        private static String encryptionInfo = "Encrypt a compressed file into an image.";
-        private static String feedInfo = "A description of recent actions and events will appear in the feed.";
-        private static String mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
-        private static String mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
-        private static String mainWelcomeInfo = "To continue, select an option from the right.\r\n\r\nMouse over an option to learn more.";
-        private static String passwordInfo = "Passwords can be any length and consist of characters 0-9 and a-f, case insensitive. Passwords are used to decrypt or encrypt with extra security.\r\n\r\nDouble-click to reveal the password.";
-        private static String runDecryptionInfo = "Decrypt the file from the image.";
-        private static String runEncryptionInfo = "Encrypt the file into the image.";
-        private static String selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
-        private static String selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
-        private static String selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static String startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
+        private static string cancelDecryptionInfo = "Cancel the pending decryption.";
+        private static string cancelEncryptionInfo = "Cancel the pending encryption.";
+        private static string decryptionInfo = "Extract the compressed files from an image.";
+        private static string encryptionInfo = "Encrypt a compressed file into an image.";
+        private static string feedInfo = "A description of recent actions and events will appear in the feed.";
+        private static string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
+        private static string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
+        private static string mainWelcomeInfo = "To continue, select an option from the right.\r\n\r\nMouse over an option to learn more.";
+        private static string passwordInfo = "Passwords can be any length and consist of characters 0-9 and a-f, case insensitive. Passwords are used to decrypt or encrypt with extra security.\r\n\r\nDouble-click to reveal the password.";
+        private static string runDecryptionInfo = "Decrypt the file from the image.";
+        private static string runEncryptionInfo = "Encrypt the file into the image.";
+        private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
+        private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
+        private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
+        private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
         #endregion
 
         public Form_main()
@@ -439,18 +439,18 @@ namespace DelfinForWindows
             textBox_password.UseSystemPasswordChar = !textBox_password.UseSystemPasswordChar;
         }
         
-        private void SetInfoText(String text)
+        private void SetInfoText(string text)
         {
             textBox_info.Text = text;
         }
 
-        private void UpdateFeed(String text)
+        private void UpdateFeed(string text)
         {
             textBox_feed.AppendText(Environment.NewLine + text);
         }
 
         // returns a file's name when given a full path, if possible
-        private String ShortFileName(String longFileName)
+        private string ShortFileName(string longFileName)
         {
             try
             {
@@ -463,7 +463,7 @@ namespace DelfinForWindows
         }
 
         // returns a byte-array corresponding to the hexadecimal string input, or null on failure
-        private byte[] HexToBytes(String s)
+        private byte[] HexToBytes(string s)
         {
             s = s.ToLower();
             Regex regex = new Regex("\\A[0123456789abcdef]+\\z");
@@ -486,7 +486,7 @@ namespace DelfinForWindows
             return data;
         }
 
-        private bool Decrypt(String imgName, byte[] password)
+        private bool Decrypt(string imgName, byte[] password)
         {
             long pixScan = 0, byteScan = -4, fileSize = 0;
             int color;
@@ -652,7 +652,7 @@ namespace DelfinForWindows
             }
         }
         
-        private bool Encrypt(String imgName, String fileName, byte[] password)
+        private bool Encrypt(string imgName, string fileName, byte[] password)
         {
             long pixScan = 0, byteScan = -4, fileSize;
             int pixX, pixY;

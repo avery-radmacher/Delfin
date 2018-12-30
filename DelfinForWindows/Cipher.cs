@@ -333,6 +333,15 @@ namespace DelfinForWindows
         private readonly int[] SRTaps;
 
         /// <summary>
+        /// Creates a new cipher from a string password.
+        /// </summary>
+        /// <param name="password">The string which will generate the seed. Can be any length.</param>
+        public Cipher(string password)
+        {
+            new Cipher(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
+        }
+
+        /// <summary>
         /// Creates a new cipher from a 128-bit seed.
         /// </summary>
         /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes.</param>
@@ -365,62 +374,61 @@ namespace DelfinForWindows
                 }
             }
         }
-
-        /// <summary>
-        /// Calculates and returns the next pseudorandom bit in the stream.
-        /// </summary>
-        private int Tick()
-        {
-            /* Algorithm:
-             * 1. Find most popular bit state among 16s-place bit
-             * 2. Tick all matching LFSRs
-             * 3. XOR all 1s-bits and return
-             */
-            
-            // 1.
-            int num16sPlaceOnes = 0, majorityBit = 0;
-            for (int i = 0; i < 5; i++)
-            {
-                if ((LFSRs[i] & 16) == 16)
-                {
-                    num16sPlaceOnes++;
-                }
-            }
-            if (num16sPlaceOnes > 2)
-            {
-                majorityBit = 16; // majority bit in its place (10000₂)
-            }
-
-            // 2.
-            for (int i = 0; i < 5; i++)
-            {
-                if (true || (LFSRs[i] & 16) == majorityBit)
-                {
-                    if ((LFSRs[i] & 1) == 1)
-                    {
-                        LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
-                    }
-                    else
-                    {
-                        LFSRs[i] = LFSRs[i] >> 1;
-                    }
-                }
-            }
-
-            // 3.
-            int result = 0;
-            for (int i = 0; i < 5; i++)
-            {
-                result ^= LFSRs[i] & 1;
-            }
-            return result;
-        }
-
+        
         /// <summary>
         /// Calculates and returns the next pseudorandom byte in the stream.
         /// </summary>
         public byte GetByte()
         {
+            // Tick() calculates one bit
+            int Tick()
+            {
+                /* Algorithm:
+                 * 1. Find most popular bit state among 16s-place bit
+                 * 2. Tick all matching LFSRs
+                 * 3. XOR all 1s-bits and return
+                 */
+
+                // 1.
+                int num16sPlaceOnes = 0, majorityBit = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    if ((LFSRs[i] & 16) == 16)
+                    {
+                        num16sPlaceOnes++;
+                    }
+                }
+                if (num16sPlaceOnes > 2)
+                {
+                    majorityBit = 16; // majority bit in its place (10000₂)
+                }
+
+                // 2.
+                for (int i = 0; i < 5; i++)
+                {
+                    if (true || (LFSRs[i] & 16) == majorityBit)
+                    {
+                        if ((LFSRs[i] & 1) == 1)
+                        {
+                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
+                        }
+                        else
+                        {
+                            LFSRs[i] = LFSRs[i] >> 1;
+                        }
+                    }
+                }
+
+                // 3.
+                int resultBit = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    resultBit ^= LFSRs[i] & 1;
+                }
+                return resultBit;
+            }
+
+            // tick for a bit eight times and so build a byte
             int result = 0;
             for(int i = 0; i < 8; i++)
             {
