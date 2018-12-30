@@ -14,7 +14,7 @@ namespace DelfinForWindows
         [STAThread]
         static void Main()
         {
-            new Cipher();
+            Cipher.UnitTest();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form_main());
