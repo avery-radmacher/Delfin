@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812301446
+﻿// Author Avery Radmacher 201812302049
 
 namespace DelfinForWindows
 {
@@ -336,20 +336,18 @@ namespace DelfinForWindows
         /// Creates a new cipher from a string password.
         /// </summary>
         /// <param name="password">The string which will generate the seed. Can be any length.</param>
-        public Cipher(string password)
-        {
-            new Cipher(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
-        }
+        public Cipher(string password) : this(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)))
+        { }
 
         /// <summary>
         /// Creates a new cipher from a 128-bit seed.
         /// </summary>
-        /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes.</param>
+        /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes or more. Only the first 16 bytes are used.</param>
         public Cipher(byte[] initVector)
         {
-            if (initVector.Length != 16)
+            if (initVector.Length < 16)
             {
-                throw new System.ArgumentException("Initialization vector was not 128 bits");
+                throw new System.ArgumentException("Initialization vector was less than 128 bits");
             }
 
             LFSRs = new int[5];
