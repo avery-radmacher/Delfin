@@ -18,12 +18,12 @@ namespace DelfinForWindows
 
     public partial class Form_main : Form
     {
-        static string VERSION = "0.4";
+        static string VERSION = "0.5";
+        static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
         // TODO multi-thread big tasks and allow for cancellation
 
         MODE mode;
         bool hasImage = false, hasZip = false;
-        Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
         string errMsg;
 
         private Button button_encrypt;
@@ -464,6 +464,7 @@ namespace DelfinForWindows
             }
         }
 
+        // check whether password contains only valid characters
         private bool IsPasswordValid(string s)
         {
             return passwordRegex.IsMatch(s);

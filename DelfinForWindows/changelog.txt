@@ -9,3 +9,4 @@ Recovered user interface
 Consolidated code
 0.3 major feature update
 Stabilized encryption & decryption functions
+--- Further changes documented on GitHub releases ---
