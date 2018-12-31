@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812271826
+﻿// Author Avery Radmacher 201812302239
 // Project Delfin for Windows
 
 using System;
@@ -18,11 +18,13 @@ namespace DelfinForWindows
 
     public partial class Form_main : Form
     {
-        static String VERSION = "0.3";
+        static string VERSION = "0.4";
+        // TODO allow symbols !@#$%^&*()-_=+[{]}\\|;:'\",<.>/? in password field
+        // TODO multi-thread big tasks and allow for cancellation
 
         MODE mode;
         bool hasImage = false, hasZip = false;
-        String errMsg;
+        string errMsg;
 
         private Button button_encrypt;
         private Button button_decrypt;
@@ -41,21 +43,21 @@ namespace DelfinForWindows
         private SaveFileDialog saveFileDialog_zip;
 
         #region info texts
-        private static String cancelDecryptionInfo = "Cancel the pending decryption.";
-        private static String cancelEncryptionInfo = "Cancel the pending encryption.";
-        private static String decryptionInfo = "Extract the compressed files from an image.";
-        private static String encryptionInfo = "Encrypt a compressed file into an image.";
-        private static String feedInfo = "A description of recent actions and events will appear in the feed.";
-        private static String mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
-        private static String mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
-        private static String mainWelcomeInfo = "To continue, select an option from the right.\r\n\r\nMouse over an option to learn more.";
-        private static String passwordInfo = "Passwords can be any length and consist of characters 0-9 and a-f, case insensitive. Passwords are used to decrypt or encrypt with extra security.\r\n\r\nDouble-click to reveal the password.";
-        private static String runDecryptionInfo = "Decrypt the file from the image.";
-        private static String runEncryptionInfo = "Encrypt the file into the image.";
-        private static String selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
-        private static String selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
-        private static String selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static String startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
+        private static string cancelDecryptionInfo = "Cancel the pending decryption.";
+        private static string cancelEncryptionInfo = "Cancel the pending encryption.";
+        private static string decryptionInfo = "Extract the compressed files from an image.";
+        private static string encryptionInfo = "Encrypt a compressed file into an image.";
+        private static string feedInfo = "A description of recent actions and events will appear in the feed.";
+        private static string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
+        private static string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
+        private static string mainWelcomeInfo = "To continue, select an option from the right.\r\n\r\nMouse over an option to learn more.";
+        private static string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: (none yet)\r\n\r\nDouble-click to reveal the password.";
+        private static string runDecryptionInfo = "Decrypt the file from the image.";
+        private static string runEncryptionInfo = "Encrypt the file into the image.";
+        private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
+        private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
+        private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
+        private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
         #endregion
 
         public Form_main()
@@ -378,9 +380,9 @@ namespace DelfinForWindows
 
         private void Button_execute_Click(object sender, EventArgs e)
         {
-            if (textBox_password.Text.Length != 0 && HexToBytes(textBox_password.Text) == null)
+            if (textBox_password.Text.Length != 0 && !IsPasswordValid(textBox_password.Text))
             {
-                MessageBox.Show("Passwords can only contain digits or letters a through f (case insensitive). Please enter a valid password or leave the password field blank.", "Invalid password");
+                MessageBox.Show("The password field contains an invalid password. Please enter a valid password or leave the password field blank.", "Invalid password");
                 return;
             }
 
@@ -394,7 +396,7 @@ namespace DelfinForWindows
             if (mode == MODE.ENCRYPT)
             {
                 UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
-                if (Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, HexToBytes(textBox_password.Text)))
+                if (Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text))
                 {
                     UpdateFeed("Encryption successful.");
                 }
@@ -406,7 +408,7 @@ namespace DelfinForWindows
             else if (mode == MODE.DECRYPT)
             {
                 UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
-                if (Decrypt(openFileDialog_image.FileName, HexToBytes(textBox_password.Text)))
+                if (Decrypt(openFileDialog_image.FileName, textBox_password.Text))
                 {
                     UpdateFeed("Decryption successful.");
                 }
@@ -438,19 +440,19 @@ namespace DelfinForWindows
         {
             textBox_password.UseSystemPasswordChar = !textBox_password.UseSystemPasswordChar;
         }
-        
-        private void SetInfoText(String text)
+
+        private void SetInfoText(string text)
         {
             textBox_info.Text = text;
         }
 
-        private void UpdateFeed(String text)
+        private void UpdateFeed(string text)
         {
             textBox_feed.AppendText(Environment.NewLine + text);
         }
 
         // returns a file's name when given a full path, if possible
-        private String ShortFileName(String longFileName)
+        private string ShortFileName(string longFileName)
         {
             try
             {
@@ -462,45 +464,21 @@ namespace DelfinForWindows
             }
         }
 
-        // returns a byte-array corresponding to the hexadecimal string input, or null on failure
-        private byte[] HexToBytes(String s)
+        private bool IsPasswordValid(string s)
         {
-            s = s.ToLower();
-            Regex regex = new Regex("\\A[0123456789abcdef]+\\z");
-            if (!regex.IsMatch(s))
-            {
-                return null;
-            }
-
-            if (s.Length % 2 == 1)
-            {
-                s = "0" + s;
-            }
-
-            byte[] data = new byte[s.Length / 2];
-            for (int i = 0; i < s.Length; i += 2)
-            {
-                data[i / 2] = Convert.ToByte(s.Substring(i, 2), 16);
-            }
-
-            return data;
+            Regex regex = new Regex("\\A[0-9A-Za-z]+\\z");
+            return regex.IsMatch(s);
         }
 
-        private bool Decrypt(String imgName, byte[] password)
+        private bool Decrypt(string imgName, string password)
         {
             long pixScan = 0, byteScan = -4, fileSize = 0;
             int color;
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
-            byte[] buffer = null;
+            byte[] fileBuffer = null;
             Bitmap img;
-
-            if (password == null)
-            {
-                password = new byte[1];
-                password[0] = 0x00;
-            }
 
             // load image or quit on failure
             {
@@ -591,17 +569,27 @@ namespace DelfinForWindows
                             }
                             else
                             {
-                                buffer = new byte[fileSize];
+                                fileBuffer = new byte[fileSize];
                             }
                         }
                     }
                     else
                     {
-                        // decrypt datum with password and add to buffer
-                        buffer[byteScan] = (byte)(datum ^ password[(int)(byteScan % password.Length)]);
+                        // add datum to buffer
+                        fileBuffer[byteScan] = (byte)datum;
                     }
 
                     byteScan++;
+                }
+            }
+
+            // Decrypt file using cipher, if there was a password
+            if (!password.Equals(""))
+            {
+                Cipher cipher = new Cipher(password);
+                for (int i = 0; i < fileBuffer.Length; i++)
+                {
+                    fileBuffer[i] ^= cipher.GetByte();
                 }
             }
 
@@ -612,7 +600,7 @@ namespace DelfinForWindows
                 try
                 {
                     writer = new BinaryWriter(File.Open(saveFileDialog_zip.FileName, FileMode.Create));
-                    writer.Write(buffer);
+                    writer.Write(fileBuffer);
                 }
                 catch (Exception ex) when
                     (ex is ArgumentException ||
@@ -651,8 +639,8 @@ namespace DelfinForWindows
                 return false;
             }
         }
-        
-        private bool Encrypt(String imgName, String fileName, byte[] password)
+
+        private bool Encrypt(string imgName, string fileName, string password)
         {
             long pixScan = 0, byteScan = -4, fileSize;
             int pixX, pixY;
@@ -662,12 +650,6 @@ namespace DelfinForWindows
             int datum;
             Bitmap img;
             byte[] fileBuffer;
-
-            if (password == null)
-            {
-                password = new byte[1];
-                password[0] = 0x00;
-            }
 
             // load the zip file or quit nicely on failure
             try
@@ -763,7 +745,17 @@ namespace DelfinForWindows
                 errMsg = "image too small";
                 return false;
             }
-
+            
+            // Encrypt file using cipher, if there was a password
+            if (!password.Equals(""))
+            {
+                Cipher cipher = new Cipher(password);
+                for (int i = 0; i < fileBuffer.Length; i++)
+                {
+                    fileBuffer[i] ^= cipher.GetByte();
+                }
+            }
+            
             // main data-processing loop
             while (byteScan < fileSize || population != 0)
             {
@@ -780,8 +772,8 @@ namespace DelfinForWindows
                         }
                         else
                         {
-                            // read a byte from the file and encrypt
-                            datum = fileBuffer[byteScan] ^ password[(int)(byteScan % password.Length)];
+                            // read a byte from the file
+                            datum = fileBuffer[byteScan];
                         }
 
                         byteScan++;
@@ -854,7 +846,7 @@ namespace DelfinForWindows
                     errMsg = "unauthorized access";
                     return false;
                 }
-                
+
                 img.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
                 writer.Close();
                 writer.Dispose();
