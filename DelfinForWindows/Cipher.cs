@@ -7,7 +7,7 @@ namespace DelfinForWindows
     /// </summary>
     class Cipher
     {
-        private readonly int[,] TapCodes = {
+        private static readonly int[,] TapCodes = {
             {0x10118,
             0x1011B,
             0x10122,
