@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812302239
+﻿// Author Avery Radmacher 201901011400
 // Project Delfin for Windows
 
 using System;
@@ -16,17 +16,19 @@ namespace DelfinForWindows
         ENCRYPT,
         DECRYPT,
     }
-
+    
     public partial class Form_main : Form
     {
         static string VERSION = "0.5";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO multi-thread big tasks and allow for cancellation
 
+        // flags
         MODE mode;
-        bool hasImage = false, hasZip = false;
+        bool hasImage, hasZip;
         string errMsg;
         bool success;
+
+        Thread backgroundProcess; // used to perform encryption and decryption
 
         private Button button_encrypt;
         private Button button_decrypt;
@@ -45,8 +47,9 @@ namespace DelfinForWindows
         private SaveFileDialog saveFileDialog_zip;
 
         #region info texts
-        private static string cancelDecryptionInfo = "Cancel the pending decryption.";
-        private static string cancelEncryptionInfo = "Cancel the pending encryption.";
+        private static string cancelDecryptionInfo = "Cancel the decryption.";
+        private static string cancelEncryptionInfo = "Cancel the encryption.";
+        private static string cancellationInfo = "To abort the running operation, click cancel.";
         private static string decryptionInfo = "Extract the compressed files from an image.";
         private static string encryptionInfo = "Encrypt a compressed file into an image.";
         private static string feedInfo = "A description of recent actions and events will appear in the feed.";
@@ -65,10 +68,9 @@ namespace DelfinForWindows
         public Form_main()
         {
             InitializeComponent();
-            mode = MODE.OPEN;
             SetInfoText(mainWelcomeInfo);
             textBox_feed.Text = startupInfo;
-            Button_cancel_Click(null, null);
+            InitializeStateAndButtons();
         }
 
         private void InitializeComponent()
@@ -287,6 +289,7 @@ namespace DelfinForWindows
             SetInfoText(feedInfo);
         }
 
+        // hides password and calls MouseIdle
         private void TextBox_password_MouseLeave(object sender, EventArgs e)
         {
             textBox_password.UseSystemPasswordChar = true;
@@ -299,6 +302,10 @@ namespace DelfinForWindows
             if (mode == MODE.OPEN)
             {
                 SetInfoText(mainWelcomeInfo);
+            }
+            else if(backgroundProcess != null)
+            {
+                SetInfoText(cancellationInfo);
             }
             else if (mode == MODE.ENCRYPT)
             {
@@ -380,6 +387,7 @@ namespace DelfinForWindows
             }
         }
 
+        // runs the encryption or decryption on a background thread
         private void Button_execute_Click(object sender, EventArgs e)
         {
             if (textBox_password.Text.Length != 0 && !IsPasswordValid(textBox_password.Text))
@@ -393,55 +401,44 @@ namespace DelfinForWindows
             button_selectImage.Enabled = false;
             button_selectZip.Enabled = false;
             button_execute.Enabled = false;
-            // button_cancel.Enabled = false; DEBUG delete soon, we'll use cancel button to stop threads
-
-            // DEBUG ongoing work here to introduce threading
+            
             if (mode == MODE.ENCRYPT)
             {
-                Thread encryptThread = new Thread(Encrypt);
-             
-                //UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
-                //if (Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text))
-                //{
-                //    UpdateFeed("Encryption successful.");
-                //}
-                //else
-                //{
-                //    UpdateFeed("Encryption failed. Reason: " + errMsg);
-                //}
+                backgroundProcess = new Thread(EncryptWrapper);
+                backgroundProcess.SetApartmentState(ApartmentState.STA);
+                backgroundProcess.Start(new Tuple<string, string, string>(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
             }
             else if (mode == MODE.DECRYPT)
             {
-                //UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
-                //if (Decrypt(openFileDialog_image.FileName, textBox_password.Text))
-                //{
-                //    UpdateFeed("Decryption successful.");
-                //}
-                //else
-                //{
-                //    UpdateFeed("Decryption failed. Reason: " + errMsg);
-                //}
+                backgroundProcess = new Thread(DecryptWrapper);
+                backgroundProcess.SetApartmentState(ApartmentState.STA);
+                backgroundProcess.Start(new Tuple<string, string>(openFileDialog_image.FileName, textBox_password.Text));
             }
-
-            mode = MODE.OPEN;
-            hasImage = hasZip = false;
-            button_encrypt.Enabled = true;
-            button_decrypt.Enabled = true;
-            button_cancel.Enabled = false; // DEBUG just added, keep
         }
 
+        // resets the form and kills any background threads
         private void Button_cancel_Click(object sender, EventArgs e)
         {
-            mode = MODE.OPEN;
-            hasImage = hasZip = false;
-            button_encrypt.Enabled = true;
-            button_decrypt.Enabled = true;
-            button_selectImage.Enabled = false;
-            button_selectZip.Enabled = false;
-            button_execute.Enabled = false;
-            button_cancel.Enabled = false;
+            // kill the background process if there is one
+            if(backgroundProcess != null && backgroundProcess.IsAlive)
+            {
+                backgroundProcess.Abort();
+            }
+
+            // inform user
+            if (mode == MODE.ENCRYPT)
+            {
+                UpdateFeed("The encryption was cancelled.");
+            }
+            else if (mode == MODE.DECRYPT)
+            {
+                UpdateFeed("The decryption was cancelled.");
+            }
+
+            InitializeStateAndButtons();
         }
 
+        // reveals/hides password
         private void TextBox_password_DoubleClick(object sender, EventArgs e)
         {
             textBox_password.UseSystemPasswordChar = !textBox_password.UseSystemPasswordChar;
@@ -452,8 +449,15 @@ namespace DelfinForWindows
             textBox_info.Text = text;
         }
 
+        // threadsafe call to add text to the feedbox
         private void UpdateFeed(string text)
         {
+            if(textBox_feed.InvokeRequired)
+            {
+                textBox_feed.Invoke(new Action<string>(UpdateFeed), text);
+                return;
+            }
+
             textBox_feed.AppendText(Environment.NewLine + text);
         }
 
@@ -479,6 +483,10 @@ namespace DelfinForWindows
         // string imgName, string password
         private void Decrypt(object args)
         {
+            // set flags to incomplete states (so they will hold these values if this thread is aborted)
+            errMsg = "incomplete operation";
+            success = false;
+
             // unpack args (failsafe, but this should never fail)
             Tuple<string, string> input;
             try
@@ -488,7 +496,6 @@ namespace DelfinForWindows
             catch (InvalidCastException)
             {
                 errMsg = "fatal! Improperly packed arguments";
-                success = false;
                 return;
             }
             string imgName = input.Item1;
@@ -519,28 +526,24 @@ namespace DelfinForWindows
                     // path is null, empty, or invalid due to length, drive, or characters
                     MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
-                    success = false;
                     return;
                 }
                 catch (FileNotFoundException)
                 {
                     MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
                     errMsg = "file not found";
-                    success = false;
                     return;
                 }
                 catch (IOException)
                 {
                     MessageBox.Show("An I/O error occurred while opening the file.", "Unexpected I/O error");
                     errMsg = "unexpected I/O error";
-                    success = false;
                     return;
                 }
                 catch (System.Security.SecurityException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
                     errMsg = "unauthorized access";
-                    success = false;
                     return;
                 }
                 try
@@ -551,7 +554,6 @@ namespace DelfinForWindows
                 {
                     MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
-                    success = false;
                     return;
                 }
                 reader.Close();
@@ -592,7 +594,6 @@ namespace DelfinForWindows
                             if (img.Height * img.Width * 3 / 4 < fileSize + 4)
                             {
                                 errMsg = "corrupt file (bad header)";
-                                success = false;
                                 return;
                             }
                             else
@@ -640,21 +641,18 @@ namespace DelfinForWindows
                     // path is null, empty, or invalid due to length, drive, or characters
                     MessageBox.Show("The path\r\n" + saveFileDialog_zip.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
-                    success = false;
                     return;
                 }
                 catch (IOException)
                 {
                     MessageBox.Show("An I/O error occurred while using the file.", "Unexpected I/O error");
                     errMsg = "unexpected I/O error";
-                    success = false;
                     return;
                 }
                 catch (UnauthorizedAccessException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_zip.FileName, "Unauthorized access");
                     errMsg = "unauthorized access";
-                    success = false;
                     return;
                 }
 
@@ -668,7 +666,6 @@ namespace DelfinForWindows
             {
                 MessageBox.Show("The file was not saved.", "Canceled operation");
                 errMsg = "user cancellation";
-                success = false;
                 return;
             }
         }
@@ -676,22 +673,25 @@ namespace DelfinForWindows
         // string imgName, string fileName, string password
         private void Encrypt(object args)
         {
+            // set flags to incomplete states (so they will hold these values if this thread is aborted)
+            errMsg = "incomplete operation";
+            success = false;
+
             // unpack args (failsafe, but this should never fail)
             Tuple<string, string, string> input;
             try
             {
                 input = (Tuple<string, string, string>)args;
             }
-            catch(InvalidCastException)
+            catch (InvalidCastException)
             {
                 errMsg = "fatal! Improperly packed arguments";
-                success = false;
                 return;
             }
             string imgName = input.Item1;
             string fileName = input.Item2;
             string password = input.Item3;
-            
+
             long pixScan = 0, byteScan = -4, fileSize;
             int pixX, pixY;
             int color, A, R, G, B;
@@ -717,28 +717,24 @@ namespace DelfinForWindows
                 // path is null, empty, or invalid due to length, drive, or characters
                 MessageBox.Show("The path\r\n" + fileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                 errMsg = "invalid path name";
-                success = false;
                 return;
             }
             catch (FileNotFoundException)
             {
                 MessageBox.Show("The file\r\n" + fileName + "\r\nwas not found.", "File not found");
                 errMsg = "file not found";
-                success = false;
                 return;
             }
             catch (IOException)
             {
                 MessageBox.Show("An I/O error occurred while opening the file.", "Unexpected I/O error");
                 errMsg = "unexpected I/O error";
-                success = false;
                 return;
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
             {
                 MessageBox.Show("You don't have permission to access the file:\r\n" + fileName, "Unauthorized access");
                 errMsg = "unauthorized access";
-                success = false;
                 return;
             }
 
@@ -759,28 +755,24 @@ namespace DelfinForWindows
                     // path is null, empty, or invalid due to length, drive, or characters
                     MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
-                    success = false;
                     return;
                 }
                 catch (FileNotFoundException)
                 {
                     MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
                     errMsg = "file not found";
-                    success = false;
                     return;
                 }
                 catch (IOException)
                 {
                     MessageBox.Show("An I/O error occurred while opening the file.", "Unexpected I/O error");
                     errMsg = "unexpected I/O error";
-                    success = false;
                     return;
                 }
                 catch (System.Security.SecurityException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
                     errMsg = "unauthorized access";
-                    success = false;
                     return;
                 }
                 try
@@ -791,7 +783,6 @@ namespace DelfinForWindows
                 {
                     MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
-                    success = false;
                     return;
                 }
                 reader.Close();
@@ -802,10 +793,9 @@ namespace DelfinForWindows
             if (img.Height * img.Width * 3 / 4 < fileSize + 4)
             {
                 errMsg = "image too small";
-                success = false;
                 return;
             }
-            
+
             // Encrypt file using cipher, if there was a password
             if (!password.Equals(""))
             {
@@ -815,7 +805,7 @@ namespace DelfinForWindows
                     fileBuffer[i] ^= cipher.GetByte();
                 }
             }
-            
+
             // main data-processing loop
             while (byteScan < fileSize || population != 0)
             {
@@ -892,21 +882,18 @@ namespace DelfinForWindows
                     // path is null, empty, or invalid due to length, drive, or characters
                     MessageBox.Show("The path\r\n" + saveFileDialog_image.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
-                    success = false;
                     return;
                 }
                 catch (IOException)
                 {
                     MessageBox.Show("An I/O error occurred while using the file.", "Unexpected I/O error");
                     errMsg = "unexpected I/O error";
-                    success = false;
                     return;
                 }
                 catch (System.Security.SecurityException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_image.FileName, "Unauthorized access");
                     errMsg = "unauthorized access";
-                    success = false;
                     return;
                 }
 
@@ -920,9 +907,63 @@ namespace DelfinForWindows
             {
                 MessageBox.Show("The file was not saved.", "Canceled operation");
                 errMsg = "user cancellation";
-                success = false;
                 return;
             }
+        }
+
+        // called on its own thread to manage a decryption
+        private void DecryptWrapper(object args)
+        {
+            UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
+            Decrypt(args);
+            if (success)
+            {
+                UpdateFeed("Decryption successful.");
+            }
+            else
+            {
+                UpdateFeed("Decryption failed. Reason: " + errMsg);
+            }
+
+            InitializeStateAndButtons();
+        }
+
+        // called on its own thread to manage an encryption
+        private void EncryptWrapper(object args)
+        {
+            UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
+            Encrypt(args);
+            if (success)
+            {
+                UpdateFeed("Encryption successful.");
+            }
+            else
+            {
+                UpdateFeed("Encryption failed. Reason: " + errMsg);
+            }
+
+            InitializeStateAndButtons();
+        }
+
+        // threadsafe call to enter primary state, enabling/disabling certain buttons and setting flags
+        private void InitializeStateAndButtons()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(InitializeStateAndButtons));
+                return;
+            }
+
+            mode = MODE.OPEN;
+            hasImage = hasZip = false;
+            button_encrypt.Enabled = true;
+            button_decrypt.Enabled = true;
+            button_selectImage.Enabled = false;
+            button_selectZip.Enabled = false;
+            button_execute.Enabled = false;
+            button_cancel.Enabled = false;
+            SetInfoText(mainWelcomeInfo);
+            backgroundProcess = null;
         }
     }
 }
