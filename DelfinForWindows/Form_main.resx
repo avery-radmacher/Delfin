@@ -118,11 +118,393 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>400, 400</value>
+  <data name="button_encrypt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 13</value>
+  </data>
+  <data name="button_encrypt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="button_encrypt.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="button_encrypt.Text" xml:space="preserve">
+    <value>Encrypt</value>
+  </data>
+  <data name="&gt;&gt;button_encrypt.Name" xml:space="preserve">
+    <value>button_encrypt</value>
+  </data>
+  <data name="&gt;&gt;button_encrypt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_encrypt.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_encrypt.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="button_decrypt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 43</value>
+  </data>
+  <data name="button_decrypt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button_decrypt.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="button_decrypt.Text" xml:space="preserve">
+    <value>Decrypt</value>
+  </data>
+  <data name="&gt;&gt;button_decrypt.Name" xml:space="preserve">
+    <value>button_decrypt</value>
+  </data>
+  <data name="&gt;&gt;button_decrypt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_decrypt.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_decrypt.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="button_selectImage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 73</value>
+  </data>
+  <data name="button_selectImage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button_selectImage.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="button_selectImage.Text" xml:space="preserve">
+    <value>Choose image...</value>
+  </data>
+  <data name="&gt;&gt;button_selectImage.Name" xml:space="preserve">
+    <value>button_selectImage</value>
+  </data>
+  <data name="&gt;&gt;button_selectImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_selectImage.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_selectImage.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="button_selectZip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 103</value>
+  </data>
+  <data name="button_selectZip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button_selectZip.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="button_selectZip.Text" xml:space="preserve">
+    <value>Choose file...</value>
+  </data>
+  <data name="&gt;&gt;button_selectZip.Name" xml:space="preserve">
+    <value>button_selectZip</value>
+  </data>
+  <data name="&gt;&gt;button_selectZip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_selectZip.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_selectZip.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="button_execute.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 133</value>
+  </data>
+  <data name="button_execute.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button_execute.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="button_execute.Text" xml:space="preserve">
+    <value>Run</value>
+  </data>
+  <data name="&gt;&gt;button_execute.Name" xml:space="preserve">
+    <value>button_execute</value>
+  </data>
+  <data name="&gt;&gt;button_execute.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_execute.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_execute.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="button_cancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 163</value>
+  </data>
+  <data name="button_cancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button_cancel.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="button_cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;button_cancel.Name" xml:space="preserve">
+    <value>button_cancel</value>
+  </data>
+  <data name="&gt;&gt;button_cancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button_cancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button_cancel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="textBox_info.Location" type="System.Drawing.Point, System.Drawing">
+    <value>120, 13</value>
+  </data>
+  <data name="textBox_info.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="textBox_info.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 173</value>
+  </data>
+  <data name="textBox_info.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;textBox_info.Name" xml:space="preserve">
+    <value>textBox_info</value>
+  </data>
+  <data name="&gt;&gt;textBox_info.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;textBox_info.Parent" xml:space="preserve">
     <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBox_info.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="textBox_password.Location" type="System.Drawing.Point, System.Drawing">
+    <value>120, 193</value>
+  </data>
+  <data name="textBox_password.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 20</value>
+  </data>
+  <data name="textBox_password.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;textBox_password.Name" xml:space="preserve">
+    <value>textBox_password</value>
+  </data>
+  <data name="&gt;&gt;textBox_password.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBox_password.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBox_password.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="textBox_feed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>120, 219</value>
+  </data>
+  <data name="textBox_feed.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="textBox_feed.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Vertical</value>
+  </data>
+  <data name="textBox_feed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>252, 131</value>
+  </data>
+  <data name="textBox_feed.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;textBox_feed.Name" xml:space="preserve">
+    <value>textBox_feed</value>
+  </data>
+  <data name="&gt;&gt;textBox_feed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBox_feed.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;textBox_feed.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="label_password.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label_password.Location" type="System.Drawing.Point, System.Drawing">
+    <value>57, 196</value>
+  </data>
+  <data name="label_password.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 13</value>
+  </data>
+  <data name="label_password.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="label_password.Text" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="&gt;&gt;label_password.Name" xml:space="preserve">
+    <value>label_password</value>
+  </data>
+  <data name="&gt;&gt;label_password.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label_password.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label_password.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="pictureBox_delfin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        B6oAaCcENgAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pictureBox_delfin.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 219</value>
+  </data>
+  <data name="pictureBox_delfin.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 131</value>
+  </data>
+  <data name="pictureBox_delfin.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+    <value>Zoom</value>
+  </data>
+  <data name="pictureBox_delfin.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="pictureBox_delfin.WaitOnLoad" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;pictureBox_delfin.Name" xml:space="preserve">
+    <value>pictureBox_delfin</value>
+  </data>
+  <data name="&gt;&gt;pictureBox_delfin.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pictureBox_delfin.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;pictureBox_delfin.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="openFileDialog_image.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="openFileDialog_image.Filter" xml:space="preserve">
+    <value>PNG image|*.png</value>
+  </data>
+  <data name="openFileDialog_image.Title" xml:space="preserve">
+    <value>Select image</value>
+  </data>
+  <metadata name="openFileDialog_zip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>189, 17</value>
+  </metadata>
+  <data name="openFileDialog_zip.Filter" xml:space="preserve">
+    <value>Compressed ZIP file|*.zip</value>
+  </data>
+  <data name="openFileDialog_zip.Title" xml:space="preserve">
+    <value>Select data file</value>
+  </data>
+  <metadata name="saveFileDialog_image.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>343, 17</value>
+  </metadata>
+  <data name="saveFileDialog_image.Filter" xml:space="preserve">
+    <value>PNG image|*.png</value>
+  </data>
+  <data name="saveFileDialog_image.Title" xml:space="preserve">
+    <value>Save image</value>
+  </data>
+  <metadata name="saveFileDialog_zip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>511, 17</value>
+  </metadata>
+  <data name="saveFileDialog_zip.Filter" xml:space="preserve">
+    <value>Compressed ZIP file|*.zip</value>
+  </data>
+  <data name="saveFileDialog_zip.Title" xml:space="preserve">
+    <value>Save data file</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>384, 362</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -200,425 +582,43 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 </value>
   </data>
-  <data name="&gt;&gt;button_selectZip.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="button_cancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="openFileDialog_image.Filter" xml:space="preserve">
-    <value>PNG image|*.png</value>
-  </data>
-  <data name="&gt;&gt;button_selectImage.Name" xml:space="preserve">
-    <value>button_selectImage</value>
-  </data>
-  <data name="&gt;&gt;button_cancel.Name" xml:space="preserve">
-    <value>button_cancel</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="textBox_info.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;button_execute.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="label_password.Text" xml:space="preserve">
-    <value>Password:</value>
-  </data>
-  <data name="saveFileDialog_image.Filter" xml:space="preserve">
-    <value>PNG image|*.png</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>Form_main</value>
-  </data>
-  <data name="&gt;&gt;textBox_feed.Name" xml:space="preserve">
-    <value>textBox_feed</value>
-  </data>
-  <data name="textBox_feed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>120, 219</value>
-  </data>
-  <data name="&gt;&gt;pictureBox_delfin.Name" xml:space="preserve">
-    <value>pictureBox_delfin</value>
-  </data>
-  <data name="&gt;&gt;textBox_info.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;button_execute.Name" xml:space="preserve">
-    <value>button_execute</value>
-  </data>
-  <data name="textBox_feed.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label_password.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;button_selectZip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog_zip.Name" xml:space="preserve">
-    <value>saveFileDialog_zip</value>
-  </data>
-  <data name="textBox_feed.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;button_cancel.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;label_password.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="button_cancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 163</value>
-  </data>
-  <data name="textBox_info.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;button_decrypt.Name" xml:space="preserve">
-    <value>button_decrypt</value>
-  </data>
-  <data name="&gt;&gt;label_password.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;button_decrypt.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;pictureBox_delfin.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="button_selectImage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog_image.Name" xml:space="preserve">
-    <value>saveFileDialog_image</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog_zip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBox_feed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="openFileDialog_zip.Filter" xml:space="preserve">
-    <value>Compressed ZIP file|*.zip</value>
-  </data>
-  <data name="saveFileDialog_image.Title" xml:space="preserve">
-    <value>Save image</value>
-  </data>
-  <data name="&gt;&gt;button_selectImage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="button_decrypt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="textBox_password.Location" type="System.Drawing.Point, System.Drawing">
-    <value>120, 193</value>
-  </data>
-  <data name="&gt;&gt;button_execute.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="button_execute.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="&gt;&gt;openFileDialog_zip.Name" xml:space="preserve">
-    <value>openFileDialog_zip</value>
-  </data>
-  <data name="&gt;&gt;button_selectZip.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;pictureBox_delfin.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;pictureBox_delfin.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="saveFileDialog_zip.Filter" xml:space="preserve">
-    <value>Compressed ZIP file|*.zip</value>
-  </data>
-  <data name="&gt;&gt;button_selectImage.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="button_encrypt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="button_selectImage.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="pictureBox_delfin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        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
-        B6oAaCcENgAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="button_cancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="button_encrypt.Text" xml:space="preserve">
-    <value>Encrypt</value>
-  </data>
-  <data name="pictureBox_delfin.WaitOnLoad" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;button_encrypt.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="textBox_password.Size" type="System.Drawing.Size, System.Drawing">
-    <value>252, 20</value>
-  </data>
-  <data name="pictureBox_delfin.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;textBox_info.Name" xml:space="preserve">
-    <value>textBox_info</value>
-  </data>
-  <data name="&gt;&gt;textBox_feed.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label_password.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="button_execute.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 133</value>
-  </data>
-  <data name="button_encrypt.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="pictureBox_delfin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 131</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog_zip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="saveFileDialog_zip.Title" xml:space="preserve">
-    <value>Save data file</value>
-  </data>
-  <data name="textBox_password.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="button_execute.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="button_selectZip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="button_decrypt.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 43</value>
-  </data>
-  <data name="textBox_info.Location" type="System.Drawing.Point, System.Drawing">
-    <value>120, 13</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="pictureBox_delfin.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>Zoom</value>
-  </data>
-  <data name="label_password.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 196</value>
-  </data>
-  <data name="&gt;&gt;label_password.Name" xml:space="preserve">
-    <value>label_password</value>
-  </data>
-  <data name="button_decrypt.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="pictureBox_delfin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 219</value>
-  </data>
   <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
     <value>400, 400</value>
   </data>
-  <data name="&gt;&gt;button_encrypt.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="textBox_info.Size" type="System.Drawing.Size, System.Drawing">
-    <value>252, 173</value>
-  </data>
-  <data name="&gt;&gt;button_selectImage.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="button_decrypt.Text" xml:space="preserve">
-    <value>Decrypt</value>
-  </data>
-  <data name="&gt;&gt;button_decrypt.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;button_selectZip.Name" xml:space="preserve">
-    <value>button_selectZip</value>
-  </data>
-  <data name="button_selectImage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 73</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog_image.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="button_selectImage.Text" xml:space="preserve">
-    <value>Choose image...</value>
-  </data>
-  <data name="label_password.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 13</value>
-  </data>
-  <data name="&gt;&gt;textBox_password.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;button_cancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>400, 400</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Delfin for Windows</value>
   </data>
-  <data name="&gt;&gt;textBox_password.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="button_selectZip.Text" xml:space="preserve">
-    <value>Choose file...</value>
-  </data>
-  <data name="&gt;&gt;textBox_password.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="label_password.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;textBox_info.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="button_selectZip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 103</value>
-  </data>
-  <data name="button_execute.Text" xml:space="preserve">
-    <value>Run</value>
-  </data>
-  <data name="&gt;&gt;textBox_password.Name" xml:space="preserve">
-    <value>textBox_password</value>
-  </data>
   <data name="&gt;&gt;openFileDialog_image.Name" xml:space="preserve">
     <value>openFileDialog_image</value>
-  </data>
-  <data name="&gt;&gt;button_decrypt.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="openFileDialog_image.Title" xml:space="preserve">
-    <value>Select image</value>
-  </data>
-  <data name="&gt;&gt;button_cancel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="textBox_feed.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="&gt;&gt;button_encrypt.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="openFileDialog_zip.Title" xml:space="preserve">
-    <value>Select data file</value>
-  </data>
-  <data name="button_cancel.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
   </data>
   <data name="&gt;&gt;openFileDialog_image.Type" xml:space="preserve">
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>384, 362</value>
+  <data name="&gt;&gt;openFileDialog_zip.Name" xml:space="preserve">
+    <value>openFileDialog_zip</value>
+  </data>
+  <data name="&gt;&gt;openFileDialog_zip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog_image.Name" xml:space="preserve">
+    <value>saveFileDialog_image</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog_image.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog_zip.Name" xml:space="preserve">
+    <value>saveFileDialog_zip</value>
+  </data>
+  <data name="&gt;&gt;saveFileDialog_zip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>Form_main</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;textBox_feed.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="textBox_feed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>252, 131</value>
-  </data>
-  <data name="button_encrypt.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 13</value>
-  </data>
-  <data name="button_selectZip.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;button_execute.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;button_encrypt.Name" xml:space="preserve">
-    <value>button_encrypt</value>
-  </data>
-  <metadata name="saveFileDialog_zip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>511, 17</value>
-  </metadata>
-  <metadata name="saveFileDialog_image.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>343, 17</value>
-  </metadata>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="openFileDialog_zip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>189, 17</value>
-  </metadata>
-  <metadata name="openFileDialog_image.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
 </root>

@@ -150,8 +150,8 @@ namespace DelfinForWindows
             // 
             // textBox_info
             // 
-            resources.ApplyResources(this.textBox_info, "textBox_info");
             this.textBox_info.BackColor = System.Drawing.SystemColors.Window;
+            resources.ApplyResources(this.textBox_info, "textBox_info");
             this.textBox_info.Name = "textBox_info";
             this.textBox_info.ReadOnly = true;
             this.textBox_info.TabStop = false;
@@ -167,8 +167,8 @@ namespace DelfinForWindows
             // 
             // textBox_feed
             // 
-            resources.ApplyResources(this.textBox_feed, "textBox_feed");
             this.textBox_feed.BackColor = System.Drawing.SystemColors.Window;
+            resources.ApplyResources(this.textBox_feed, "textBox_feed");
             this.textBox_feed.Name = "textBox_feed";
             this.textBox_feed.ReadOnly = true;
             this.textBox_feed.TabStop = false;
@@ -185,6 +185,7 @@ namespace DelfinForWindows
             resources.ApplyResources(this.pictureBox_delfin, "pictureBox_delfin");
             this.pictureBox_delfin.Name = "pictureBox_delfin";
             this.pictureBox_delfin.TabStop = false;
+            this.pictureBox_delfin.DoubleClick += new System.EventHandler(this.PictureBox_delfin_DoubleClick);
             // 
             // openFileDialog_image
             // 
@@ -442,6 +443,30 @@ namespace DelfinForWindows
         private void TextBox_password_DoubleClick(object sender, EventArgs e)
         {
             textBox_password.UseSystemPasswordChar = !textBox_password.UseSystemPasswordChar;
+        }
+
+        private void PictureBox_delfin_DoubleClick(object sender, EventArgs e)
+        {
+            if (backgroundProcess == null)
+            {
+                return;
+            }
+
+            if (textBox_password.Text.Contains("Marino"))
+            {
+                if (textBox_password.Text.Contains("Dan"))
+                {
+                    UpdateFeed("You're a big guy.");
+                }
+                else
+                {
+                    UpdateFeed("You paid homage to Marino.");
+                }
+            }
+            else
+            {
+                UpdateFeed("You paid homage to Dan.");
+            }
         }
 
         private void SetInfoText(string text)
