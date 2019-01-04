@@ -451,9 +451,9 @@ namespace DelfinForWindows
                 return;
             }
 
-            if (textBox_password.Text.Contains("Marino"))
+            if (textBox_password.Text.ToLower().Contains("marino"))
             {
-                if (textBox_password.Text.Contains("Dan"))
+                if (textBox_password.Text.ToLower().Contains("dan"))
                 {
                     UpdateFeed("You're a big guy.");
                     pictureBox_delfin.Image = Image.FromFile("ETD2.png");
