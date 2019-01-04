@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201901012019
+﻿// Author Avery Radmacher 201901041637
 // Project Delfin for Windows
 
 using System;
@@ -226,7 +226,6 @@ namespace DelfinForWindows
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_delfin)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         private void Button_encrypt_MouseEnter(object sender, EventArgs e)
@@ -457,6 +456,7 @@ namespace DelfinForWindows
                 if (textBox_password.Text.Contains("Dan"))
                 {
                     UpdateFeed("You're a big guy.");
+                    pictureBox_delfin.Image = Image.FromFile("ETD2.png");
                 }
                 else
                 {
