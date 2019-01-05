@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201901041637
+﻿// Author Avery Radmacher 201901041959
 // Project Delfin for Windows
 
 using System;
@@ -21,6 +21,7 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.6";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        // TODO encrypt header, add header version, account for variable header size, & update corrupt header error message
 
         // flags
         MODE mode;
