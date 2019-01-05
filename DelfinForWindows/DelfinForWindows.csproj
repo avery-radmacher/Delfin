@@ -80,6 +80,7 @@
     <Compile Include="Form_main.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Header.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form_main.af.resx">
