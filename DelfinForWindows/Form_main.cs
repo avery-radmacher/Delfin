@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201901041959
+﻿// Author Avery Radmacher 201901051504
 // Project Delfin for Windows
 
 using System;
@@ -21,8 +21,7 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.6";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO encrypt header, add header version, account for variable header size, & update corrupt header error message
-
+        
         // flags
         MODE mode;
         bool hasImage, hasZip;
@@ -229,6 +228,7 @@ namespace DelfinForWindows
             this.PerformLayout();
         }
 
+        #region event handlers
         private void Button_encrypt_MouseEnter(object sender, EventArgs e)
         {
             SetInfoText(encryptionInfo);
@@ -469,6 +469,7 @@ namespace DelfinForWindows
                 UpdateFeed("You paid homage to Dan.");
             }
         }
+        #endregion
 
         private void SetInfoText(string text)
         {
@@ -527,13 +528,15 @@ namespace DelfinForWindows
             string imgName = input.Item1;
             string password = input.Item2;
 
-            long pixScan = 0, byteScan = -4, fileSize = 0;
+            long pixScan = 0, byteScan = -1;
             int color;
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
+            Header header = new Header();
             byte[] fileBuffer = null;
             Bitmap img;
+            Cipher cipher = password.Equals("") ? null : new Cipher(password);
 
             // load image or quit on failure
             {
@@ -587,7 +590,7 @@ namespace DelfinForWindows
             }
 
             // main data-processing loop
-            while (byteScan < fileSize)
+            while (!header.IsComplete || byteScan < header.FileSize)
             {
                 // read a pixel's worth of data from the image
                 color = img.GetPixel((int)(pixScan % img.Width), (int)(pixScan / img.Width)).ToArgb();
@@ -605,43 +608,49 @@ namespace DelfinForWindows
                     pairBuffer[1] = pairBuffer[5];
                     population -= 4;
 
-                    // determine whether byte is part of filesize header or part of file
+                    // determine whether byte is part of header or part of file
                     if (byteScan < 0)
                     {
-#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
-                        // part of header; continue to construct fileSize value
-                        fileSize = fileSize << 8 | datum;
-#pragma warning restore CS0675
+                        // construct header
+                        if(cipher != null)
+                        {
+                            datum ^= cipher.GetByte();
+                        }
+                        header.AddByte((byte)datum);
 
-                        // if filesize construction is complete, verify it and allocate buffer
-                        if (byteScan == -1)
+                        if(header.IsUnsupported)
+                        {
+                            errMsg = "header could not be read or password is wrong";
+                            return;
+                        }
+
+                        // if header construction is complete, verify it and allocate buffer
+                        if (header.IsComplete)
                         {
                             // ensure file fits per completed header
-                            if (img.Height * img.Width * 3 / 4 < fileSize + 4)
+                            if (img.Height * img.Width * 3 / 4 < header.FileSize + header.HeaderSize)
                             {
-                                errMsg = "corrupt file (bad header)";
+                                errMsg = "file is corrupt or password is wrong";
                                 return;
                             }
                             else
                             {
-                                fileBuffer = new byte[fileSize];
+                                fileBuffer = new byte[header.FileSize];
+                                byteScan = 0;
                             }
                         }
                     }
                     else
                     {
                         // add datum to buffer
-                        fileBuffer[byteScan] = (byte)datum;
+                        fileBuffer[byteScan++] = (byte)datum;
                     }
-
-                    byteScan++;
                 }
             }
 
             // Decrypt file using cipher, if there was a password
-            if (!password.Equals(""))
+            if (cipher != null)
             {
-                Cipher cipher = new Cipher(password);
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
                     fileBuffer[i] ^= cipher.GetByte();
@@ -718,13 +727,15 @@ namespace DelfinForWindows
             string fileName = input.Item2;
             string password = input.Item3;
 
-            long pixScan = 0, byteScan = -4, fileSize;
+            long pixScan = 0, byteScan, fileSize;
             int pixX, pixY;
             int color, A, R, G, B;
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
             Bitmap img;
+            Header header = new Header();
+            byte[] headerBuffer;
             byte[] fileBuffer;
 
             // load the zip file or quit nicely on failure
@@ -815,23 +826,32 @@ namespace DelfinForWindows
                 reader.Dispose();
             }
 
+            // initiailze header and related items
+            header.FileSize = (int)fileSize;
+            headerBuffer = header.ToBuffer();
+            byteScan = 0 - header.HeaderSize;
+
             // verify image is large enough to hold the file or quit
-            if (img.Height * img.Width * 3 / 4 < fileSize + 4)
+            if (img.Height * img.Width * 3 / 4 < fileSize + header.HeaderSize)
             {
                 errMsg = "image too small";
                 return;
             }
 
-            // Encrypt file using cipher, if there was a password
+            // Encrypt file and header using cipher, if there was a password
             if (!password.Equals(""))
             {
                 Cipher cipher = new Cipher(password);
+                for(int i = 0; i < headerBuffer.Length; i++)
+                {
+                    headerBuffer[i] ^= cipher.GetByte();
+                }
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
                     fileBuffer[i] ^= cipher.GetByte();
                 }
             }
-
+      
             // main data-processing loop
             while (byteScan < fileSize || population != 0)
             {
@@ -843,8 +863,8 @@ namespace DelfinForWindows
                     {
                         if (byteScan < 0)
                         {
-                            // read a byte from fileSize for the "header"
-                            datum = (int)((fileSize >> ((int)byteScan * -8 - 8)) & 255);
+                            // read a byte from the header
+                            datum = headerBuffer[byteScan + header.HeaderSize];
                         }
                         else
                         {
