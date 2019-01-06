@@ -21,8 +21,7 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.6";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO encrypt header, add header version, account for variable header size, & update corrupt header error message
-
+        
         // flags
         MODE mode;
         bool hasImage, hasZip;
@@ -621,7 +620,7 @@ namespace DelfinForWindows
 
                         if(header.IsUnsupported)
                         {
-                            errMsg = "header could not be read";
+                            errMsg = "header could not be read or password is wrong";
                             return;
                         }
 
@@ -631,7 +630,7 @@ namespace DelfinForWindows
                             // ensure file fits per completed header
                             if (img.Height * img.Width * 3 / 4 < header.FileSize + header.HeaderSize)
                             {
-                                errMsg = "filesize is corrupt";
+                                errMsg = "file is corrupt or password is wrong";
                                 return;
                             }
                             else
@@ -864,7 +863,6 @@ namespace DelfinForWindows
                     {
                         if (byteScan < 0)
                         {
-                            // datum = (int)((fileSize >> ((int)byteScan * -8 - 8)) & 255); // old value // TODO remove
                             // read a byte from the header
                             datum = headerBuffer[byteScan + header.HeaderSize];
                         }

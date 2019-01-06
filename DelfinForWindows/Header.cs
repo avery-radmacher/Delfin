@@ -5,7 +5,7 @@
     /// </summary>
     class Header
     {
-        public const int CURRENT_VERSION = 1;
+        public const int CURRENT_VERSION = 0;
 
         public bool IsComplete;
         public bool IsUnsupported;
@@ -53,12 +53,12 @@
             if (HeaderVersion == 0) // Versions 0.6+ use HV0
             {
                 // 1-4 (4 bytes): fileSize
-                if (byteScan < 4)
+                if (byteScan < 5)
                 {
                     FileSize <<= 8;
                     FileSize |= b;
                     byteScan++;
-                    if (byteScan == 4)
+                    if (byteScan == 5)
                     {
                         HeaderSize = 5;
                         IsComplete = true;
@@ -69,7 +69,7 @@
         }
 
         /// <summary>
-        /// Converts the header to a byte buffer
+        /// Converts the header to a byte buffer.
         /// </summary>
         public byte[] ToBuffer()
         {
@@ -78,10 +78,10 @@
             //  bytes 1-4: filesize (int32)
             byte[] buffer = new byte[5];
             buffer[0] = 0;
-            buffer[1] = (byte)((FileSize >> 24) | 255);
-            buffer[2] = (byte)((FileSize >> 16) | 255);
-            buffer[3] = (byte)((FileSize >> 8) | 255);
-            buffer[4] = (byte)(FileSize | 255);
+            buffer[1] = (byte)((FileSize >> 24) & 255);
+            buffer[2] = (byte)((FileSize >> 16) & 255);
+            buffer[3] = (byte)((FileSize >> 8) & 255);
+            buffer[4] = (byte)(FileSize & 255);
             return buffer;
         }
     }
