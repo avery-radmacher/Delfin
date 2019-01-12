@@ -366,7 +366,7 @@
   <data name="pictureBox_delfin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAALIAAACyCAYAAADmipVoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADr4AAA6+AepCscAAAAAGYktHRAD/AP8A/6C9p5MAAAAedEVYdFNQUkQAZmlzaDA1
+        YQUAAAAJcEhZcwAADr0AAA69AUf7kK0AAAAGYktHRAD/AP8A/6C9p5MAAAAedEVYdFNQUkQAZmlzaDA1
         LnNwcmVhZHNoaXJ0LmludGVybqzC/IYAAAASdEVYdEVYSUY6T3JpZW50YXRpb24AMYRY7O8AAA96SURB
         VHhe7d15bBVVGwZwZFMLLoALu8qiRCuhqOASBQUVI4ioERVoMSIQUXGpMaxGRS0aiewRNUKiiEoQIoIK
         EQQFCS5YkbWioVpZRBaDG8jr98xnY22f297eO3fmnTnvH7+EP7h3zpzz3Nu5Z868p8a+ffvEmKizIJez
@@ -468,7 +468,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="openFileDialog_image.Filter" xml:space="preserve">
-    <value>PNG image|*.png</value>
+    <value>PNG image|*.png|JPG image|*.jpg|JPEG image|*.jpeg|TIFF image|*.tiff|Bitmap|*.bmp</value>
   </data>
   <data name="openFileDialog_image.Title" xml:space="preserve">
     <value>Select image</value>

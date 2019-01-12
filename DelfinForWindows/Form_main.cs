@@ -21,7 +21,8 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.6.1";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        
+        // TODO load common image formats to the buffer (still output them as png though)
+
         // flags
         MODE mode;
         bool hasImage, hasZip;
@@ -226,6 +227,7 @@ namespace DelfinForWindows
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_delfin)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #region event handlers
