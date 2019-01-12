@@ -19,8 +19,9 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.6.1";
+        static string VERSION = "0.7 betas";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        // TODO message boxes after failed en-/de-cryption
 
         // flags
         MODE mode;
@@ -363,7 +364,11 @@ namespace DelfinForWindows
         {
             if (openFileDialog_image.ShowDialog() == DialogResult.OK)
             {
-                if (openFileDialog_image.FileName.EndsWith(".png"))
+                if (openFileDialog_image.FileName.EndsWith(".png") ||
+                    openFileDialog_image.FileName.EndsWith(".jpg") ||
+                    openFileDialog_image.FileName.EndsWith(".jpeg") ||
+                    openFileDialog_image.FileName.EndsWith(".tiff") ||
+                    openFileDialog_image.FileName.EndsWith(".bmp"))
                 {
                     hasImage = true;
                     if (mode == MODE.DECRYPT)
@@ -380,7 +385,7 @@ namespace DelfinForWindows
                 {
                     hasImage = false;
                     button_execute.Enabled = false;
-                    MessageBox.Show("You must select a .png file.", "Invalid file");
+                    MessageBox.Show("You must select a valid image file format.", "Invalid file");
                 }
             }
         }
@@ -993,6 +998,7 @@ namespace DelfinForWindows
             else
             {
                 UpdateFeed("Decryption failed. Reason: " + errMsg);
+                //MessageBox.Show("Decryption failed. Reason: " + errMsg, "Failed decryption");
             }
 
             InitializeStateAndButtons();
@@ -1010,6 +1016,7 @@ namespace DelfinForWindows
             else
             {
                 UpdateFeed("Encryption failed. Reason: " + errMsg);
+                //MessageBox.Show("Encryption failed. Reason: " + errMsg, "Failed encryption");
             }
 
             InitializeStateAndButtons();
