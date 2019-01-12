@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201901051504
+﻿// Author Avery Radmacher 201901111916
 // Project Delfin for Windows
 
 using System;
@@ -569,7 +569,7 @@ namespace DelfinForWindows
                     errMsg = "unexpected I/O error";
                     return;
                 }
-                catch (System.Security.SecurityException)
+                catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
                     errMsg = "unauthorized access";
@@ -806,7 +806,7 @@ namespace DelfinForWindows
                     errMsg = "unexpected I/O error";
                     return;
                 }
-                catch (System.Security.SecurityException)
+                catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
                     MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
                     errMsg = "unauthorized access";
