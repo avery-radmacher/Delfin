@@ -63,6 +63,7 @@ namespace DelfinForWindows
         private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
         private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
         private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
+        private Button button_Settings;
         private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
         #endregion
 
@@ -92,6 +93,7 @@ namespace DelfinForWindows
             this.openFileDialog_zip = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog_image = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog_zip = new System.Windows.Forms.SaveFileDialog();
+            this.button_Settings = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_delfin)).BeginInit();
             this.SuspendLayout();
             // 
@@ -208,9 +210,16 @@ namespace DelfinForWindows
             this.saveFileDialog_zip.DefaultExt = "zip";
             resources.ApplyResources(this.saveFileDialog_zip, "saveFileDialog_zip");
             // 
+            // button_Settings
+            // 
+            resources.ApplyResources(this.button_Settings, "button_Settings");
+            this.button_Settings.Name = "button_Settings";
+            this.button_Settings.UseVisualStyleBackColor = true;
+            // 
             // Form_main
             // 
             resources.ApplyResources(this, "$this");
+            this.Controls.Add(this.button_Settings);
             this.Controls.Add(this.pictureBox_delfin);
             this.Controls.Add(this.label_password);
             this.Controls.Add(this.textBox_feed);
