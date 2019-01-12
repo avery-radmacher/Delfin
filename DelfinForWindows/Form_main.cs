@@ -19,7 +19,7 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.6";
+        static string VERSION = "0.6.1";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
         
         // flags
@@ -55,7 +55,7 @@ namespace DelfinForWindows
         private static string feedInfo = "A description of recent actions and events will appear in the feed.";
         private static string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
         private static string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
-        private static string mainWelcomeInfo = "To continue, select an option from the right.\r\n\r\nMouse over an option to learn more.";
+        private static string mainWelcomeInfo = "To continue, select an option from the left.\r\n\r\nMouse over an option to learn more.";
         private static string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: !@#$%^&*()-_=+[{]}\\|;:'\",<.>/?\r\n\r\nDouble-click to reveal the password.";
         private static string runDecryptionInfo = "Decrypt the file from the image.";
         private static string runEncryptionInfo = "Encrypt the file into the image.";
