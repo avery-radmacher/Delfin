@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\user\Documents\</PublishUrl>
+    <PublishUrl>C:\Users\user\Documents\DEPLOY\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -64,6 +64,9 @@
   <PropertyGroup>
     <ApplicationIcon>FormIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -101,7 +104,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="DelfinForWindows_TemporaryKey.pfx" />
-    <None Include="1.0 TODOS.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
