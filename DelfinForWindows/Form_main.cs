@@ -21,7 +21,6 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.6.1";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO load common image formats to the buffer (still output them as png though)
 
         // flags
         MODE mode;
@@ -46,6 +45,7 @@ namespace DelfinForWindows
         private OpenFileDialog openFileDialog_zip;
         private SaveFileDialog saveFileDialog_image;
         private SaveFileDialog saveFileDialog_zip;
+        private Button button_Settings;
 
         #region info texts
         private static string cancelDecryptionInfo = "Cancel the decryption.";
@@ -63,7 +63,7 @@ namespace DelfinForWindows
         private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
         private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
         private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private Button button_Settings;
+        private static String settingsInfo = "Click to view and edit settings.";
         private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
         #endregion
 
@@ -215,6 +215,9 @@ namespace DelfinForWindows
             resources.ApplyResources(this.button_Settings, "button_Settings");
             this.button_Settings.Name = "button_Settings";
             this.button_Settings.UseVisualStyleBackColor = true;
+            this.button_Settings.Click += new System.EventHandler(this.Button_Settings_Click);
+            this.button_Settings.MouseEnter += new System.EventHandler(this.Button_Settings_MouseEnter);
+            this.button_Settings.MouseLeave += new System.EventHandler(this.MouseIdle);
             // 
             // Form_main
             // 
@@ -289,6 +292,11 @@ namespace DelfinForWindows
             {
                 SetInfoText(cancelEncryptionInfo);
             }
+        }
+
+        private void Button_Settings_MouseEnter(object sender, EventArgs e)
+        {
+            SetInfoText(settingsInfo);
         }
 
         private void TextBox_password_MouseEnter(object sender, EventArgs e)
@@ -448,6 +456,11 @@ namespace DelfinForWindows
             }
 
             InitializeStateAndButtons();
+        }
+
+        private void Button_Settings_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("In the future, this button will do something.", "Settings button");
         }
 
         // reveals/hides password
