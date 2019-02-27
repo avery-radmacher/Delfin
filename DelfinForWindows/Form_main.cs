@@ -517,6 +517,18 @@ namespace DelfinForWindows
             textBox_feed.AppendText(Environment.NewLine + text);
         }
 
+        // threadsafe display of message box with string and caption
+        private void ShowMessage(string text, string caption)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string, string>(ShowMessage), text, caption);
+                return;
+            }
+
+            MessageBox.Show(text, caption);
+        }
+
         // returns a file's name when given a full path, if possible
         private string ShortFileName(string longFileName)
         {
@@ -998,7 +1010,7 @@ namespace DelfinForWindows
             else
             {
                 UpdateFeed("Decryption failed. Reason: " + errMsg);
-                //MessageBox.Show("Decryption failed. Reason: " + errMsg, "Failed decryption");
+                ShowMessage("Decryption failed. Reason: " + errMsg, "Failed decryption");
             }
 
             InitializeStateAndButtons();
@@ -1016,7 +1028,7 @@ namespace DelfinForWindows
             else
             {
                 UpdateFeed("Encryption failed. Reason: " + errMsg);
-                //MessageBox.Show("Encryption failed. Reason: " + errMsg, "Failed encryption");
+                ShowMessage("Encryption failed. Reason: " + errMsg, "Failed encryption");
             }
 
             InitializeStateAndButtons();
