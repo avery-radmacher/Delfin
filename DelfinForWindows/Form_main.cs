@@ -21,6 +21,7 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.7 betas";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        // TODO change image selection filters depending on cryption type
 
         // flags
         MODE mode;
