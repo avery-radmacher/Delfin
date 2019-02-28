@@ -364,18 +364,19 @@ namespace DelfinForWindows
         {
             if (openFileDialog_image.ShowDialog() == DialogResult.OK)
             {
-                if (openFileDialog_image.FileName.EndsWith(".png") ||
-                    openFileDialog_image.FileName.EndsWith(".jpg") ||
-                    openFileDialog_image.FileName.EndsWith(".jpeg") ||
-                    openFileDialog_image.FileName.EndsWith(".tiff") ||
-                    openFileDialog_image.FileName.EndsWith(".bmp"))
+                // make sure a valid file was selected
+                // (multiple image formats can be encrypted; only .png can be decrypted)
+                if ((mode == MODE.ENCRYPT &&
+                        (openFileDialog_image.FileName.EndsWith(".png") ||
+                        openFileDialog_image.FileName.EndsWith(".jpg") ||
+                        openFileDialog_image.FileName.EndsWith(".jpeg") ||
+                        openFileDialog_image.FileName.EndsWith(".tiff") ||
+                        openFileDialog_image.FileName.EndsWith(".bmp"))) ||
+                    (mode == MODE.DECRYPT &&
+                        openFileDialog_image.FileName.EndsWith(".png")))
                 {
                     hasImage = true;
-                    if (mode == MODE.DECRYPT)
-                    {
-                        button_execute.Enabled = true;
-                    }
-                    else if (mode == MODE.ENCRYPT && hasZip)
+                    if (mode == MODE.DECRYPT || (mode == MODE.ENCRYPT && hasZip))
                     {
                         button_execute.Enabled = true;
                     }
