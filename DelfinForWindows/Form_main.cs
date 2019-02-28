@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201902271917
+﻿// Author Avery Radmacher 201902271953
 // Project Delfin for Windows
 
 using System;
@@ -19,7 +19,7 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.7 betas";
+        static string VERSION = "0.7";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
 
         // flags
@@ -247,11 +247,13 @@ namespace DelfinForWindows
         private void Button_encrypt_MouseEnter(object sender, EventArgs e)
         {
             SetInfoText(encryptionInfo);
+            openFileDialog_image.Filter = "All files|*.*|PNG image|*.png|JPG image|*.jpg|JPEG image|*.jpeg|TIFF image|*.tiff|Bitmap|*.bmp";
         }
 
         private void Button_decrypt_MouseEnter(object sender, EventArgs e)
         {
             SetInfoText(decryptionInfo);
+            openFileDialog_image.Filter = "PNG image|*.png";
         }
 
         private void Button_selectImage_MouseEnter(object sender, EventArgs e)
@@ -364,18 +366,19 @@ namespace DelfinForWindows
         {
             if (openFileDialog_image.ShowDialog() == DialogResult.OK)
             {
-                if (openFileDialog_image.FileName.EndsWith(".png") ||
-                    openFileDialog_image.FileName.EndsWith(".jpg") ||
-                    openFileDialog_image.FileName.EndsWith(".jpeg") ||
-                    openFileDialog_image.FileName.EndsWith(".tiff") ||
-                    openFileDialog_image.FileName.EndsWith(".bmp"))
+                // make sure a valid file was selected
+                // (multiple image formats can be encrypted; only .png can be decrypted)
+                if ((mode == MODE.ENCRYPT &&
+                        (openFileDialog_image.FileName.EndsWith(".png") ||
+                        openFileDialog_image.FileName.EndsWith(".jpg") ||
+                        openFileDialog_image.FileName.EndsWith(".jpeg") ||
+                        openFileDialog_image.FileName.EndsWith(".tiff") ||
+                        openFileDialog_image.FileName.EndsWith(".bmp"))) ||
+                    (mode == MODE.DECRYPT &&
+                        openFileDialog_image.FileName.EndsWith(".png")))
                 {
                     hasImage = true;
-                    if (mode == MODE.DECRYPT)
-                    {
-                        button_execute.Enabled = true;
-                    }
-                    else if (mode == MODE.ENCRYPT && hasZip)
+                    if (mode == MODE.DECRYPT || (mode == MODE.ENCRYPT && hasZip))
                     {
                         button_execute.Enabled = true;
                     }
