@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201901111916
+﻿// Author Avery Radmacher 201902271917
 // Project Delfin for Windows
 
 using System;
@@ -21,7 +21,6 @@ namespace DelfinForWindows
     {
         static string VERSION = "0.7 betas";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO message boxes after failed en-/de-cryption
 
         // flags
         MODE mode;
@@ -29,6 +28,7 @@ namespace DelfinForWindows
         string errMsg;
         bool success;
 
+        Thread midgroundProcess; // used to manage encryption and decryption
         Thread backgroundProcess; // used to perform encryption and decryption
 
         private Button button_encrypt;
@@ -324,7 +324,7 @@ namespace DelfinForWindows
             {
                 SetInfoText(mainWelcomeInfo);
             }
-            else if(backgroundProcess != null)
+            else if(midgroundProcess != null)
             {
                 SetInfoText(cancellationInfo);
             }
@@ -429,15 +429,15 @@ namespace DelfinForWindows
             
             if (mode == MODE.ENCRYPT)
             {
-                backgroundProcess = new Thread(EncryptWrapper);
-                backgroundProcess.SetApartmentState(ApartmentState.STA);
-                backgroundProcess.Start(new Tuple<string, string, string>(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
+                midgroundProcess = new Thread(EncryptWrapper);
+                midgroundProcess.SetApartmentState(ApartmentState.STA);
+                midgroundProcess.Start(new Tuple<string, string, string>(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
             }
             else if (mode == MODE.DECRYPT)
             {
-                backgroundProcess = new Thread(DecryptWrapper);
-                backgroundProcess.SetApartmentState(ApartmentState.STA);
-                backgroundProcess.Start(new Tuple<string, string>(openFileDialog_image.FileName, textBox_password.Text));
+                midgroundProcess = new Thread(DecryptWrapper);
+                midgroundProcess.SetApartmentState(ApartmentState.STA);
+                midgroundProcess.Start(new Tuple<string, string>(openFileDialog_image.FileName, textBox_password.Text));
             }
         }
 
@@ -676,7 +676,18 @@ namespace DelfinForWindows
                             }
                             else
                             {
-                                fileBuffer = new byte[header.FileSize];
+                                // It seems that occasionally the FileSize can overflow (I believe on invalid password
+                                // that slyly goes unnoticed) and throw a rare exception here. Just quit if so.
+                                try
+                                {
+                                    fileBuffer = new byte[header.FileSize];
+                                }
+                                catch (OverflowException)
+                                {
+                                    errMsg = "file is corrupt or password is wrong";
+                                    return;
+                                }
+
                                 byteScan = 0;
                             }
                         }
@@ -1002,7 +1013,11 @@ namespace DelfinForWindows
         private void DecryptWrapper(object args)
         {
             UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
-            Decrypt(args);
+            //Decrypt(args);
+            backgroundProcess = new Thread(Decrypt);
+            backgroundProcess.SetApartmentState(ApartmentState.STA);
+            backgroundProcess.Start(args);
+            backgroundProcess.Join();
             if (success)
             {
                 UpdateFeed("Decryption successful.");
@@ -1020,7 +1035,11 @@ namespace DelfinForWindows
         private void EncryptWrapper(object args)
         {
             UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
-            Encrypt(args);
+            //Encrypt(args);
+            backgroundProcess = new Thread(Encrypt);
+            backgroundProcess.SetApartmentState(ApartmentState.STA);
+            backgroundProcess.Start(args);
+            backgroundProcess.Join();
             if (success)
             {
                 UpdateFeed("Encryption successful.");
@@ -1052,6 +1071,7 @@ namespace DelfinForWindows
             button_execute.Enabled = false;
             button_cancel.Enabled = false;
             SetInfoText(mainWelcomeInfo);
+            midgroundProcess = null;
             backgroundProcess = null;
         }
     }
