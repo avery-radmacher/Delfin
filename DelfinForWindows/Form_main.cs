@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201902271947
+﻿// Author Avery Radmacher 201902271953
 // Project Delfin for Windows
 
 using System;
@@ -19,9 +19,8 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.7 betas";
+        static string VERSION = "0.7";
         static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
-        // TODO change image selection filters depending on cryption type
 
         // flags
         MODE mode;
@@ -248,11 +247,13 @@ namespace DelfinForWindows
         private void Button_encrypt_MouseEnter(object sender, EventArgs e)
         {
             SetInfoText(encryptionInfo);
+            openFileDialog_image.Filter = "All files|*.*|PNG image|*.png|JPG image|*.jpg|JPEG image|*.jpeg|TIFF image|*.tiff|Bitmap|*.bmp";
         }
 
         private void Button_decrypt_MouseEnter(object sender, EventArgs e)
         {
             SetInfoText(decryptionInfo);
+            openFileDialog_image.Filter = "PNG image|*.png";
         }
 
         private void Button_selectImage_MouseEnter(object sender, EventArgs e)
