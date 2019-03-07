@@ -11,4 +11,8 @@ Delfin is currently released as a standalone Windows Forms program. Delfin is un
 
 ---
 
+To download and run Delfin, head over to the [releases](https://www.github.com/avery-radmacher/Delfin/releases) page.
+
+---
+
 Try and find the Easter eggs.
