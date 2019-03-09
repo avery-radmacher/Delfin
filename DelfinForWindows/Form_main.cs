@@ -64,7 +64,7 @@ namespace DelfinForWindows
         private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
         private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
         private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static String settingsInfo = "Click to view and edit settings.";
+        private static string settingsInfo = "Click to view and edit settings.";
         private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
         #endregion
 
@@ -200,6 +200,7 @@ namespace DelfinForWindows
             // 
             this.openFileDialog_zip.DefaultExt = "zip";
             resources.ApplyResources(this.openFileDialog_zip, "openFileDialog_zip");
+            this.openFileDialog_zip.Multiselect = true;
             // 
             // saveFileDialog_image
             // 
@@ -393,10 +394,15 @@ namespace DelfinForWindows
             }
         }
 
+        // DEBUG TEST begin experimenting with accepting multiple files
         private void Button_selectZip_Click(object sender, EventArgs e)
         {
             if (openFileDialog_zip.ShowDialog() == DialogResult.OK)
             {
+                if(openFileDialog_zip.FileNames.Length > 1)
+                {
+                    ShowMessage("Multiselection", "NOICE MITE!");
+                }
                 if (openFileDialog_zip.FileName.EndsWith(".zip"))
                 {
                     hasZip = true;
@@ -410,7 +416,7 @@ namespace DelfinForWindows
                 {
                     hasZip = false;
                     button_execute.Enabled = false;
-                    MessageBox.Show("You must select a .zip file", "Invalid file");
+                    MessageBox.Show("You must select a .zip file.", "Invalid file");
                 }
             }
         }

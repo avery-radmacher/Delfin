@@ -477,10 +477,10 @@
     <value>189, 17</value>
   </metadata>
   <data name="openFileDialog_zip.Filter" xml:space="preserve">
-    <value>Compressed ZIP file|*.zip</value>
+    <value>Compressed ZIP file|*.zip|All files|*.*</value>
   </data>
   <data name="openFileDialog_zip.Title" xml:space="preserve">
-    <value>Select data file</value>
+    <value>Select data files</value>
   </data>
   <metadata name="saveFileDialog_image.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>343, 17</value>
@@ -503,7 +503,7 @@
   <data name="button_Settings.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6CAYAAACI7Fo9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAACQrSURBVHhe7Z0P5H9teccfMzMzmZkkySOZSfLIJEkyeSRJ
+        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAACQrSURBVHhe7Z0P5H9teccfMzMzmZkkySOZSfLIJEkyeSRJ
         JjNJ8njMI0nmkWQik0xmkiRJMpNHkiSZTJJJZpKZZJJkJklmkpnZrtfv91zfru/9vc7ne8657+s+930+
         15vX7/s778/ncz73Oedznz/3fd3X/Yjo15IkOT2pVOoapLW9PAMkSXIeUqnUNUhre1n7y7+qchkted5n
         93oovfN6LKcX722S9+GqFaZSqVQqlaqUXon1Mp8kyflwTQV5/iVQuYzO7KH00kPDevqf8k2evPdu+XyN
