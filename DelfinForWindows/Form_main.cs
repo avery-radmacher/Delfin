@@ -1022,7 +1022,6 @@ namespace DelfinForWindows
         private void DecryptWrapper(object args)
         {
             UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
-            //Decrypt(args);
             backgroundProcess = new Thread(Decrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
             backgroundProcess.Start(args);
@@ -1044,7 +1043,6 @@ namespace DelfinForWindows
         private void EncryptWrapper(object args)
         {
             UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
-            //Encrypt(args);
             backgroundProcess = new Thread(Encrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
             backgroundProcess.Start(args);
