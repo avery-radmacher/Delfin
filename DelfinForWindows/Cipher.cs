@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201904102112
+﻿// Author Avery Radmacher 201904102127
 
 using System;
 using System.Diagnostics;
@@ -407,7 +407,7 @@ namespace DelfinForWindows
                 // 2.
                 for (int i = 0; i < 5; i++)
                 {
-                    if (true || (LFSRs[i] & 16) == majorityBit)
+                    if ((LFSRs[i] & 16) == majorityBit)
                     {
                         if ((LFSRs[i] & 1) == 1)
                         {
@@ -421,44 +421,118 @@ namespace DelfinForWindows
                 }
 
                 // 3.
-                int resultBit = 0;
-                for (int i = 0; i < 5; i++)
-                {
-                    resultBit ^= LFSRs[i] & 1;
-                }
-                return resultBit;
+                return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
             }
 
             // tick for a bit eight times and so build a byte
-            int result = 0;
-            for(int i = 0; i < 8; i++)
-            {
-                result = (result << 1) | Tick();
-            }
+            int result = Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
             return (byte)result;
         }
 
         // TEST MATERIALS //
 
+        /// <summary>
+        /// Calculates and returns the next pseudorandom byte in the stream.
+        /// </summary>
+        public byte GetByte2()
+        {
+            // Tick() calculates one bit
+            int Tick()
+            {
+                /* Algorithm:
+                 * 1. Find most popular bit state among 16s-place bit
+                 * 2. Tick all matching LFSRs
+                 * 3. XOR all 1s-bits and return
+                 */
+
+                // 1.
+                int num16sPlaceOnes = 0, majorityBit = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    if ((LFSRs[i] & 16) == 16)
+                    {
+                        num16sPlaceOnes++;
+                    }
+                }
+                if (num16sPlaceOnes > 2)
+                {
+                    majorityBit = 16; // majority bit in its place (10000₂)
+                }
+
+                // 2.
+                for (int i = 0; i < 5; i++)
+                {
+                    if ((LFSRs[i] & 16) == majorityBit)
+                    {
+                        if ((LFSRs[i] & 1) == 1)
+                        {
+                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
+                        }
+                        else
+                        {
+                            LFSRs[i] = LFSRs[i] >> 1;
+                        }
+                    }
+                }
+
+                // 3.
+                return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
+            }
+
+            // tick for a bit eight times and so build a byte
+            int result = Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            return (byte)result;
+        }
+
         public static void Test()
         {
             Console.WriteLine("[AR] Beginning test.");
             // setup work here
-
+            Cipher c = new Cipher("AR");
+            Cipher d = new Cipher("AR");
             //
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
+            Stopwatch watch1 = new Stopwatch();
+            watch1.Start();
 
             // put test code here
-            for(long i = 0; i < 1000000000L; i++)
+            for(long i = 0; i < 10000000L; i++)
             {
-
+                c.GetByte();
             }
             //
 
-            watch.Stop();
-            TimeSpan ts = watch.Elapsed;
+            watch1.Stop();
+            Stopwatch watch2 = new Stopwatch();
+            watch2.Start();
+            
+            // put test code here
+            for (long i = 0; i < 10000000L; i++)
+            {
+                d.GetByte2();
+            }
+            //
+
+            watch2.Stop();
+            TimeSpan ts = watch1.Elapsed;
             string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+                ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+            Console.WriteLine("[AR] Time: " + elapsedTime);
+            ts = watch2.Elapsed;
+            elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                 ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
             Console.WriteLine("[AR] Time: " + elapsedTime);
         }
