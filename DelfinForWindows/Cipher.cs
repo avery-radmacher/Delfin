@@ -405,19 +405,25 @@ namespace DelfinForWindows
                 }
 
                 // 2.
-                for (int i = 0; i < 5; i++)
+                if ((LFSRs[0] & 16) == majorityBit)
                 {
-                    if ((LFSRs[i] & 16) == majorityBit)
-                    {
-                        if ((LFSRs[i] & 1) == 1)
-                        {
-                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
-                        }
-                        else
-                        {
-                            LFSRs[i] = LFSRs[i] >> 1;
-                        }
-                    }
+                    LFSRs[0] = (LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1);
+                }
+                if ((LFSRs[1] & 16) == majorityBit)
+                {
+                    LFSRs[1] = (LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1);
+                }
+                if ((LFSRs[2] & 16) == majorityBit)
+                {
+                    LFSRs[2] = (LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1);
+                }
+                if ((LFSRs[3] & 16) == majorityBit)
+                {
+                    LFSRs[3] = (LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1);
+                }
+                if ((LFSRs[4] & 16) == majorityBit)
+                {
+                    LFSRs[4] = (LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1);
                 }
 
                 // 3.
@@ -467,19 +473,25 @@ namespace DelfinForWindows
                 }
 
                 // 2.
-                for (int i = 0; i < 5; i++)
+                if ((LFSRs[0] & 16) == majorityBit)
                 {
-                    if ((LFSRs[i] & 16) == majorityBit)
-                    {
-                        if ((LFSRs[i] & 1) == 1)
-                        {
-                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
-                        }
-                        else
-                        {
-                            LFSRs[i] = LFSRs[i] >> 1;
-                        }
-                    }
+                    LFSRs[0] = (LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1);
+                }
+                if ((LFSRs[1] & 16) == majorityBit)
+                {
+                    LFSRs[1] = (LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1);
+                }
+                if ((LFSRs[2] & 16) == majorityBit)
+                {
+                    LFSRs[2] = (LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1);
+                }
+                if ((LFSRs[3] & 16) == majorityBit)
+                {
+                    LFSRs[3] = (LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1);
+                }
+                if ((LFSRs[4] & 16) == majorityBit)
+                {
+                    LFSRs[4] = (LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1);
                 }
 
                 // 3.
