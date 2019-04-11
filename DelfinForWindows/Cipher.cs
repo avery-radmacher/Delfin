@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812302049
+﻿// Author Avery Radmacher 201904102112
 
 namespace DelfinForWindows
 {
@@ -433,6 +433,13 @@ namespace DelfinForWindows
                 result = (result << 1) | Tick();
             }
             return (byte)result;
+        }
+
+        // TEST MATERIALS //
+
+        public static void Test()
+        {
+            System.Console.WriteLine("[AR] Test");
         }
     }
 }
