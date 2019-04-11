@@ -1,5 +1,8 @@
 ﻿// Author Avery Radmacher 201904102112
 
+using System;
+using System.Diagnostics;
+
 namespace DelfinForWindows
 {
     /// <summary>
@@ -439,7 +442,25 @@ namespace DelfinForWindows
 
         public static void Test()
         {
-            System.Console.WriteLine("[AR] Test");
+            Console.WriteLine("[AR] Beginning test.");
+            // setup work here
+
+            //
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            // put test code here
+            for(long i = 0; i < 1000000000L; i++)
+            {
+
+            }
+            //
+
+            watch.Stop();
+            TimeSpan ts = watch.Elapsed;
+            string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+                ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+            Console.WriteLine("[AR] Time: " + elapsedTime);
         }
     }
 }
