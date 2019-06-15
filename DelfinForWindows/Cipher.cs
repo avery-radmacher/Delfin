@@ -409,7 +409,7 @@ namespace DelfinForWindows
                 LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
 
                 // 3.
-                return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
+                return (LFSRs[0] ^ LFSRs[1] ^ LFSRs[2] ^ LFSRs[3] ^ LFSRs[4]) & 1;
             }
 
             // tick for a bit eight times and so build a byte
@@ -426,7 +426,7 @@ namespace DelfinForWindows
 
         // TEST MATERIALS //
         // GetByte2() is where new (hopefully faster) stream generation code should be written and tested.
-        // Test() is called to compare running speeds of GetByte() and GetByte2() and display to console.
+        // Test() is called to compare running speeds of GetByte() and GetByte2() and display to console repeatedly.
         // Once GetByte2() is confirmed faster, its code should be ported to GetByte() and further improvements can be conceived.
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace DelfinForWindows
                 LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
 
                 // 3.
-                return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
+                return (LFSRs[0] ^ LFSRs[1] ^ LFSRs[2] ^ LFSRs[3] ^ LFSRs[4]) & 1;
             }
 
             // tick for a bit eight times and so build a byte
@@ -485,35 +485,36 @@ namespace DelfinForWindows
             Cipher d = new Cipher("AR");
             //
             Stopwatch watch1 = new Stopwatch();
-            watch1.Start();
-
-            // put test code here
-            for(long i = 0; i < 10000000L; i++)
-            {
-                c.GetByte();
-            }
-            //
-
-            watch1.Stop();
             Stopwatch watch2 = new Stopwatch();
-            watch2.Start();
-            
-            // put test code here
-            for (long i = 0; i < 10000000L; i++)
-            {
-                d.GetByte2();
-            }
-            //
 
-            watch2.Stop();
-            TimeSpan ts = watch1.Elapsed;
-            string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
-                ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-            Console.WriteLine("[AR] Time 1: " + elapsedTime);
-            ts = watch2.Elapsed;
-            elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
-                ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-            Console.WriteLine("[AR] Time 2: " + elapsedTime);
+            while (true)
+            {
+                watch1.Reset();
+                watch2.Reset();
+
+                watch1.Start();
+                for (long i = 0; i < 10000000L; i++)
+                {
+                    c.GetByte();
+                }
+                watch1.Stop();
+
+                watch2.Start();
+                for (long i = 0; i < 10000000L; i++)
+                {
+                    d.GetByte2();
+                }
+                watch2.Stop();
+
+                TimeSpan ts = watch1.Elapsed;
+                string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+                    ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+                Console.WriteLine("[AR] Time 1: " + elapsedTime);
+                ts = watch2.Elapsed;
+                elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+                    ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+                Console.WriteLine("[AR] Time 2: " + elapsedTime);
+            }
         }
     }
 }
