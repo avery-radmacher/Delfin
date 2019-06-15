@@ -10,7 +10,7 @@ namespace DelfinForWindows
     /// </summary>
     class Cipher
     {
-        private static readonly int[,] TapCodes = {
+        protected static readonly int[,] TapCodes = {
             {0x10118,
             0x1011B,
             0x10122,
@@ -332,8 +332,8 @@ namespace DelfinForWindows
             0x4004AA,
             0x4004B2} };
 
-        private readonly int[] LFSRs;
-        private readonly int[] SRTaps;
+        protected readonly int[] LFSRs;
+        protected readonly int[] SRTaps;
 
         /// <summary>
         /// Creates a new cipher from a string password.
@@ -379,7 +379,7 @@ namespace DelfinForWindows
         /// <summary>
         /// Calculates and returns the next pseudorandom byte in the stream.
         /// </summary>
-        public byte GetByte()
+        public virtual byte GetByte()
         {
             // Tick() calculates one bit
             int Tick()
@@ -443,6 +443,9 @@ namespace DelfinForWindows
         }
 
         // TEST MATERIALS //
+        // GetByte2() is where new (hopefully faster) stream generation code should be written and tested.
+        // Test() is called to compare running speeds of GetByte() and GetByte2() and display to console.
+        // Once GetByte2() is confirmed faster, its code should be ported to GetByte() and further improvements can be conceived.
 
         /// <summary>
         /// Calculates and returns the next pseudorandom byte in the stream.
@@ -565,47 +568,20 @@ namespace DelfinForWindows
         /// Creates a new cipher from a string password.
         /// </summary>
         /// <param name="password">The string which will generate the seed. Can be any length.</param>
-        public Cipher(string password) : this(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)))
+        public OldCipher(string password) : this(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)))
         { }
 
         /// <summary>
         /// Creates a new cipher from a 128-bit seed.
         /// </summary>
         /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes or more. Only the first 16 bytes are used.</param>
-        public Cipher(byte[] initVector)
-        {
-            if (initVector.Length < 16)
-            {
-                throw new System.ArgumentException("Initialization vector was less than 128 bits");
-            }
-
-            LFSRs = new int[5];
-            SRTaps = new int[5];
-            LFSRs[0] = (initVector[0] << 9) | (initVector[1] << 1) | (initVector[2] >> 7);
-            LFSRs[1] = ((initVector[2] & 127) << 11) | (initVector[3] << 3) | (initVector[4] >> 5);
-            LFSRs[2] = ((initVector[4] & 7) << 14) | (initVector[5] << 6) | (initVector[6] >> 2);
-            LFSRs[3] = ((initVector[6] & 3) << 19) | (initVector[7] << 11) | (initVector[8] << 3) | (initVector[9] >> 5);
-            LFSRs[4] = ((initVector[9] & 31) << 18) | (initVector[10] << 10) | (initVector[11] << 2) | (initVector[12] >> 6);
-            SRTaps[0] = TapCodes[0, initVector[12] & 63];
-            SRTaps[1] = TapCodes[1, initVector[13] >> 2];
-            SRTaps[2] = TapCodes[2, (initVector[13] & 3) << 4 | (initVector[14] >> 4)];
-            SRTaps[3] = TapCodes[3, (initVector[14] & 15) << 2 | (initVector[15] >> 6)];
-            SRTaps[4] = TapCodes[4, initVector[15] & 63];
-
-            // remove possibility of zero-valued LFSRs
-            for (int i = 0; i < 5; i++)
-            {
-                if (LFSRs[i] == 0)
-                {
-                    LFSRs[i] = 1;
-                }
-            }
-        }
+        public OldCipher(byte[] initVector) : base(initVector)
+        { }
 
         /// <summary>
         /// Calculates and returns the next pseudorandom byte in the stream.
         /// </summary>
-        public byte GetByte()
+        public override byte GetByte()
         {
             // Tick() calculates one bit
             int Tick()
