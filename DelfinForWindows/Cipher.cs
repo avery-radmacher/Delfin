@@ -394,37 +394,19 @@ namespace DelfinForWindows
                 int num16sPlaceOnes = 0, majorityBit = 0;
                 for (int i = 0; i < 5; i++)
                 {
-                    if ((LFSRs[i] & 16) == 16)
-                    {
-                        num16sPlaceOnes++;
-                    }
+                    num16sPlaceOnes += LFSRs[i] & 16;
                 }
-                if (num16sPlaceOnes > 2)
+                if (num16sPlaceOnes > 32)
                 {
                     majorityBit = 16; // majority bit in its place (10000₂)
                 }
 
                 // 2.
-                if ((LFSRs[0] & 16) == majorityBit)
-                {
-                    LFSRs[0] = (LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1);
-                }
-                if ((LFSRs[1] & 16) == majorityBit)
-                {
-                    LFSRs[1] = (LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1);
-                }
-                if ((LFSRs[2] & 16) == majorityBit)
-                {
-                    LFSRs[2] = (LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1);
-                }
-                if ((LFSRs[3] & 16) == majorityBit)
-                {
-                    LFSRs[3] = (LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1);
-                }
-                if ((LFSRs[4] & 16) == majorityBit)
-                {
-                    LFSRs[4] = (LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1);
-                }
+                LFSRs[0] = (LFSRs[0] & 16) == majorityBit ? ((LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1)) : LFSRs[0];
+                LFSRs[1] = (LFSRs[1] & 16) == majorityBit ? ((LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1)) : LFSRs[1];
+                LFSRs[2] = (LFSRs[2] & 16) == majorityBit ? ((LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1)) : LFSRs[2];
+                LFSRs[3] = (LFSRs[3] & 16) == majorityBit ? ((LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1)) : LFSRs[3];
+                LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
 
                 // 3.
                 return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
@@ -473,26 +455,11 @@ namespace DelfinForWindows
                 }
 
                 // 2.
-                if ((LFSRs[0] & 16) == majorityBit)
-                {
-                    LFSRs[0] = (LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1);
-                }
-                if ((LFSRs[1] & 16) == majorityBit)
-                {
-                    LFSRs[1] = (LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1);
-                }
-                if ((LFSRs[2] & 16) == majorityBit)
-                {
-                    LFSRs[2] = (LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1);
-                }
-                if ((LFSRs[3] & 16) == majorityBit)
-                {
-                    LFSRs[3] = (LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1);
-                }
-                if ((LFSRs[4] & 16) == majorityBit)
-                {
-                    LFSRs[4] = (LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1);
-                }
+                LFSRs[0] = (LFSRs[0] & 16) == majorityBit ? ((LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1)) : LFSRs[0];
+                LFSRs[1] = (LFSRs[1] & 16) == majorityBit ? ((LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1)) : LFSRs[1];
+                LFSRs[2] = (LFSRs[2] & 16) == majorityBit ? ((LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1)) : LFSRs[2];
+                LFSRs[3] = (LFSRs[3] & 16) == majorityBit ? ((LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1)) : LFSRs[3];
+                LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
 
                 // 3.
                 return (LFSRs[0] & 1) ^ (LFSRs[1] & 1) ^ (LFSRs[2] & 1) ^ (LFSRs[3] & 1) ^ (LFSRs[4] & 1);
