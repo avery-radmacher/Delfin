@@ -1,15 +1,24 @@
-﻿namespace DelfinForWindows
+﻿/* Header versions, data, and properties
+ * 
+ * HV? | Size | 0 Bytes 1       2       3       4        | Properties
+ * ----+------+------------------------------------------+---------------------
+ * HV0 |    5 | Version [Filesize----------------------] | Uses OldCipher
+ * HV1 |    5 | Version [Filesize----------------------] |
+ */
+
+namespace DelfinForWindows
 {
     /// <summary>
     /// Represents the header at the beginning of the encrypted file, including methods for converting the header to and from buffers.
     /// </summary>
     class Header
     {
-        public const int CURRENT_VERSION = 0;
+        public const int CURRENT_VERSION = 1;
 
         public bool IsComplete;
         public bool IsUnsupported;
         public int FileSize;
+        public bool UseOldCipher;
         public byte HeaderVersion;
         public int HeaderSize;
 
@@ -20,7 +29,8 @@
         {
             IsComplete = false;
             IsUnsupported = false;
-            HeaderVersion = 0;
+            UseOldCipher = false;
+            HeaderVersion = CURRENT_VERSION;
             byteScan = 0;
             HeaderSize = 5;
         }
@@ -50,7 +60,24 @@
                 return;
             }
 
-            if (HeaderVersion == 0) // Versions 0.6+ use HV0
+            if (HeaderVersion == 0) // Versions 0.6–0.7 use HV0
+            {
+                UseOldCipher = true; // HV0 uses the deprecated short-circuiting cipher
+
+                // 1-4 (4 bytes): fileSize
+                if (byteScan < 5)
+                {
+                    FileSize <<= 8;
+                    FileSize |= b;
+                    byteScan++;
+                    if (byteScan == 5)
+                    {
+                        HeaderSize = 5;
+                        IsComplete = true;
+                    }
+                }
+            }
+            else if (HeaderVersion == 1) // Versions 0.8+ use HV1
             {
                 // 1-4 (4 bytes): fileSize
                 if (byteScan < 5)
@@ -73,11 +100,11 @@
         /// </summary>
         public byte[] ToBuffer()
         {
-            // HV0:
-            //  byte 0: header version (0x00)
+            // HV0 & HV1:
+            //  byte 0: header version 
             //  bytes 1-4: filesize (int32)
             byte[] buffer = new byte[5];
-            buffer[0] = 0;
+            buffer[0] = HeaderVersion;
             buffer[1] = (byte)((FileSize >> 24) & 255);
             buffer[2] = (byte)((FileSize >> 16) & 255);
             buffer[3] = (byte)((FileSize >> 8) & 255);

@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201812302049
+﻿// Author Avery Radmacher 201906151929
 
 namespace DelfinForWindows
 {
@@ -7,7 +7,7 @@ namespace DelfinForWindows
     /// </summary>
     class Cipher
     {
-        private static readonly int[,] TapCodes = {
+        protected static readonly int[,] TapCodes = {
             {0x10118,
             0x1011B,
             0x10122,
@@ -329,8 +329,8 @@ namespace DelfinForWindows
             0x4004AA,
             0x4004B2} };
 
-        private readonly int[] LFSRs;
-        private readonly int[] SRTaps;
+        protected readonly int[] LFSRs;
+        protected readonly int[] SRTaps;
 
         /// <summary>
         /// Creates a new cipher from a string password.
@@ -376,7 +376,7 @@ namespace DelfinForWindows
         /// <summary>
         /// Calculates and returns the next pseudorandom byte in the stream.
         /// </summary>
-        public byte GetByte()
+        public virtual byte GetByte()
         {
             // Tick() calculates one bit
             int Tick()
@@ -391,44 +391,84 @@ namespace DelfinForWindows
                 int num16sPlaceOnes = 0, majorityBit = 0;
                 for (int i = 0; i < 5; i++)
                 {
-                    if ((LFSRs[i] & 16) == 16)
-                    {
-                        num16sPlaceOnes++;
-                    }
+                    num16sPlaceOnes += LFSRs[i] & 16;
                 }
-                if (num16sPlaceOnes > 2)
+                if (num16sPlaceOnes > 32)
                 {
                     majorityBit = 16; // majority bit in its place (10000₂)
                 }
 
                 // 2.
-                for (int i = 0; i < 5; i++)
-                {
-                    if (true || (LFSRs[i] & 16) == majorityBit)
-                    {
-                        if ((LFSRs[i] & 1) == 1)
-                        {
-                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
-                        }
-                        else
-                        {
-                            LFSRs[i] = LFSRs[i] >> 1;
-                        }
-                    }
-                }
+                LFSRs[0] = (LFSRs[0] & 16) == majorityBit ? ((LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1)) : LFSRs[0];
+                LFSRs[1] = (LFSRs[1] & 16) == majorityBit ? ((LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1)) : LFSRs[1];
+                LFSRs[2] = (LFSRs[2] & 16) == majorityBit ? ((LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1)) : LFSRs[2];
+                LFSRs[3] = (LFSRs[3] & 16) == majorityBit ? ((LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1)) : LFSRs[3];
+                LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
 
                 // 3.
+                return (LFSRs[0] ^ LFSRs[1] ^ LFSRs[2] ^ LFSRs[3] ^ LFSRs[4]) & 1;
+            }
+
+            // tick for a bit eight times and so build a byte
+            int result = Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            result = (result << 1) | Tick();
+            return (byte)result;
+        }
+    }
+}
+
+// OLD CIPHER CODE //
+namespace DelfinForWindows
+{
+    /// <summary>
+    /// Represents a stream cipher with a 128-bit seed and a very long period.
+    /// </summary>
+    class OldCipher : Cipher
+    {
+        /// <summary>
+        /// Creates a new cipher from a string password.
+        /// </summary>
+        /// <param name="password">The string which will generate the seed. Can be any length.</param>
+        public OldCipher(string password) : this(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)))
+        { }
+
+        /// <summary>
+        /// Creates a new cipher from a 128-bit seed.
+        /// </summary>
+        /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes or more. Only the first 16 bytes are used.</param>
+        public OldCipher(byte[] initVector) : base(initVector)
+        { }
+
+        /// <summary>
+        /// Calculates and returns the next pseudorandom byte in the stream.
+        /// </summary>
+        public override byte GetByte()
+        {
+            // Tick() calculates one bit
+            int Tick()
+            {
+                /* Algorithm:
+                 * 1. Tick all  LFSRs
+                 * 2. XOR all 1s-bits and return
+                 */
+                
                 int resultBit = 0;
                 for (int i = 0; i < 5; i++)
                 {
-                    resultBit ^= LFSRs[i] & 1;
+                    resultBit ^= (LFSRs[i] = (LFSRs[i] >> 1) ^ (((LFSRs[i] & 1) == 1) ? SRTaps[i] : 0)) & 1;
                 }
                 return resultBit;
             }
 
             // tick for a bit eight times and so build a byte
             int result = 0;
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 result = (result << 1) | Tick();
             }

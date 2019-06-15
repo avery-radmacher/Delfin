@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201902271953
+﻿// Author Avery Radmacher 201906151737
 // Project Delfin for Windows
 
 using System;
@@ -580,7 +580,7 @@ namespace DelfinForWindows
             Header header = new Header();
             byte[] fileBuffer = null;
             Bitmap img;
-            Cipher cipher = password.Equals("") ? null : new Cipher(password);
+            Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
             // load image or quit on failure
             {
@@ -691,7 +691,13 @@ namespace DelfinForWindows
                                     return;
                                 }
 
-                                byteScan = 0;
+                                byteScan = 0; // lets loop know we are no longer reading the header
+                            }
+
+                            // for HV1, replace OldCipher with Cipher if non-null
+                            if(header.HeaderVersion == 1)
+                            {
+                                cipher = cipher == null ? null : new Cipher(password);
                             }
                         }
                     }
@@ -896,11 +902,12 @@ namespace DelfinForWindows
             // Encrypt file and header using cipher, if there was a password
             if (!password.Equals(""))
             {
-                Cipher cipher = new Cipher(password);
+                Cipher cipher = new OldCipher(password);
                 for(int i = 0; i < headerBuffer.Length; i++)
                 {
                     headerBuffer[i] ^= cipher.GetByte();
                 }
+                cipher = new Cipher(password); // HV1 encrypts the header with OldCipher and the file with Cipher (this ensures backwards compatibility)
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
                     fileBuffer[i] ^= cipher.GetByte();
