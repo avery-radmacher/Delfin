@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201906151412
+﻿// Author Avery Radmacher 201906151445
 
 using System;
 using System.Diagnostics;
@@ -586,46 +586,14 @@ namespace DelfinForWindows
             int Tick()
             {
                 /* Algorithm:
-                 * 1. Find most popular bit state among 16s-place bit
-                 * 2. Tick all matching LFSRs
-                 * 3. XOR all 1s-bits and return
+                 * 1. Tick all  LFSRs
+                 * 2. XOR all 1s-bits and return
                  */
-
-                // 1.
-                int num16sPlaceOnes = 0, majorityBit = 0;
-                for (int i = 0; i < 5; i++)
-                {
-                    if ((LFSRs[i] & 16) == 16)
-                    {
-                        num16sPlaceOnes++;
-                    }
-                }
-                if (num16sPlaceOnes > 2)
-                {
-                    majorityBit = 16; // majority bit in its place (10000₂)
-                }
-
-                // 2.
-                for (int i = 0; i < 5; i++)
-                {
-                    // if (true || (LFSRs[i] & 16) == majorityBit)
-                    // {
-                        if ((LFSRs[i] & 1) == 1)
-                        {
-                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
-                        }
-                        else
-                        {
-                            LFSRs[i] = LFSRs[i] >> 1;
-                        }
-                    // }
-                }
-
-                // 3.
+                
                 int resultBit = 0;
                 for (int i = 0; i < 5; i++)
                 {
-                    resultBit ^= LFSRs[i] & 1;
+                    resultBit ^= (LFSRs[i] = (LFSRs[i] >> 1) ^ (((LFSRs[i] & 1) == 1) ? SRTaps[i] : 0)) & 1;
                 }
                 return resultBit;
             }
