@@ -465,12 +465,9 @@ namespace DelfinForWindows
                 int num16sPlaceOnes = 0, majorityBit = 0;
                 for (int i = 0; i < 5; i++)
                 {
-                    if ((LFSRs[i] & 16) == 16)
-                    {
-                        num16sPlaceOnes++;
-                    }
+                    num16sPlaceOnes += LFSRs[i] & 16;
                 }
-                if (num16sPlaceOnes > 2)
+                if (num16sPlaceOnes > 32)
                 {
                     majorityBit = 16; // majority bit in its place (10000₂)
                 }
@@ -545,17 +542,16 @@ namespace DelfinForWindows
             TimeSpan ts = watch1.Elapsed;
             string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                 ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-            Console.WriteLine("[AR] Time: " + elapsedTime);
+            Console.WriteLine("[AR] Time 1: " + elapsedTime);
             ts = watch2.Elapsed;
             elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                 ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-            Console.WriteLine("[AR] Time: " + elapsedTime);
+            Console.WriteLine("[AR] Time 2: " + elapsedTime);
         }
     }
 }
 
 // OLD CIPHER CODE //
-
 namespace DelfinForWindows
 {
     /// <summary>
