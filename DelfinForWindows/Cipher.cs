@@ -1,7 +1,4 @@
-﻿// Author Avery Radmacher 201906151445
-
-using System;
-using System.Diagnostics;
+﻿// Author Avery Radmacher 201906151555
 
 namespace DelfinForWindows
 {
@@ -479,13 +476,13 @@ namespace DelfinForWindows
 
         public static void Test()
         {
-            Console.WriteLine("[AR] Beginning test.");
+            System.Console.WriteLine("[AR] Beginning test.");
             // setup work here
             Cipher c = new Cipher("AR");
             Cipher d = new Cipher("AR");
             //
-            Stopwatch watch1 = new Stopwatch();
-            Stopwatch watch2 = new Stopwatch();
+            System.Diagnostics.Stopwatch watch1 = new System.Diagnostics.Stopwatch();
+            System.Diagnostics.Stopwatch watch2 = new System.Diagnostics.Stopwatch();
 
             while (true)
             {
@@ -506,14 +503,14 @@ namespace DelfinForWindows
                 }
                 watch2.Stop();
 
-                TimeSpan ts = watch1.Elapsed;
+                System.TimeSpan ts = watch1.Elapsed;
                 string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                     ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-                Console.WriteLine("[AR] Time 1: " + elapsedTime);
+                System.Console.WriteLine("[AR] Time 1: " + elapsedTime);
                 ts = watch2.Elapsed;
                 elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
                     ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-                Console.WriteLine("[AR] Time 2: " + elapsedTime);
+                System.Console.WriteLine("[AR] Time 2: " + elapsedTime);
             }
         }
     }
