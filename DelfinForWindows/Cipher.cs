@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201906151555
+﻿// Author Avery Radmacher 201906151929
 
 namespace DelfinForWindows
 {
@@ -419,99 +419,6 @@ namespace DelfinForWindows
             result = (result << 1) | Tick();
             result = (result << 1) | Tick();
             return (byte)result;
-        }
-
-        // TEST MATERIALS //
-        // GetByte2() is where new (hopefully faster) stream generation code should be written and tested.
-        // Test() is called to compare running speeds of GetByte() and GetByte2() and display to console repeatedly.
-        // Once GetByte2() is confirmed faster, its code should be ported to GetByte() and further improvements can be conceived.
-
-        /// <summary>
-        /// Calculates and returns the next pseudorandom byte in the stream.
-        /// </summary>
-        public byte GetByte2()
-        {
-            // Tick() calculates one bit
-            int Tick()
-            {
-                /* Algorithm:
-                 * 1. Find most popular bit state among 16s-place bit
-                 * 2. Tick all matching LFSRs
-                 * 3. XOR all 1s-bits and return
-                 */
-
-                // 1.
-                int num16sPlaceOnes = 0, majorityBit = 0;
-                for (int i = 0; i < 5; i++)
-                {
-                    num16sPlaceOnes += LFSRs[i] & 16;
-                }
-                if (num16sPlaceOnes > 32)
-                {
-                    majorityBit = 16; // majority bit in its place (10000₂)
-                }
-
-                // 2.
-                LFSRs[0] = (LFSRs[0] & 16) == majorityBit ? ((LFSRs[0] & 1) == 1 ? ((LFSRs[0] >> 1) ^ SRTaps[0]) : (LFSRs[0] >> 1)) : LFSRs[0];
-                LFSRs[1] = (LFSRs[1] & 16) == majorityBit ? ((LFSRs[1] & 1) == 1 ? ((LFSRs[1] >> 1) ^ SRTaps[1]) : (LFSRs[1] >> 1)) : LFSRs[1];
-                LFSRs[2] = (LFSRs[2] & 16) == majorityBit ? ((LFSRs[2] & 1) == 1 ? ((LFSRs[2] >> 1) ^ SRTaps[2]) : (LFSRs[2] >> 1)) : LFSRs[2];
-                LFSRs[3] = (LFSRs[3] & 16) == majorityBit ? ((LFSRs[3] & 1) == 1 ? ((LFSRs[3] >> 1) ^ SRTaps[3]) : (LFSRs[3] >> 1)) : LFSRs[3];
-                LFSRs[4] = (LFSRs[4] & 16) == majorityBit ? ((LFSRs[4] & 1) == 1 ? ((LFSRs[4] >> 1) ^ SRTaps[4]) : (LFSRs[4] >> 1)) : LFSRs[4];
-
-                // 3.
-                return (LFSRs[0] ^ LFSRs[1] ^ LFSRs[2] ^ LFSRs[3] ^ LFSRs[4]) & 1;
-            }
-
-            // tick for a bit eight times and so build a byte
-            int result = Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            result = (result << 1) | Tick();
-            return (byte)result;
-        }
-
-        public static void Test()
-        {
-            System.Console.WriteLine("[AR] Beginning test.");
-            // setup work here
-            Cipher c = new Cipher("AR");
-            Cipher d = new Cipher("AR");
-            //
-            System.Diagnostics.Stopwatch watch1 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch watch2 = new System.Diagnostics.Stopwatch();
-
-            while (true)
-            {
-                watch1.Reset();
-                watch2.Reset();
-
-                watch1.Start();
-                for (long i = 0; i < 10000000L; i++)
-                {
-                    c.GetByte();
-                }
-                watch1.Stop();
-
-                watch2.Start();
-                for (long i = 0; i < 10000000L; i++)
-                {
-                    d.GetByte2();
-                }
-                watch2.Stop();
-
-                System.TimeSpan ts = watch1.Elapsed;
-                string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
-                    ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-                System.Console.WriteLine("[AR] Time 1: " + elapsedTime);
-                ts = watch2.Elapsed;
-                elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}",
-                    ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
-                System.Console.WriteLine("[AR] Time 2: " + elapsedTime);
-            }
         }
     }
 }
