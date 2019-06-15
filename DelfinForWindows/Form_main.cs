@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201902271953
+﻿// Author Avery Radmacher 201906151737
 // Project Delfin for Windows
 
 using System;
@@ -902,11 +902,12 @@ namespace DelfinForWindows
             // Encrypt file and header using cipher, if there was a password
             if (!password.Equals(""))
             {
-                Cipher cipher = new Cipher(password);
+                Cipher cipher = new OldCipher(password);
                 for(int i = 0; i < headerBuffer.Length; i++)
                 {
                     headerBuffer[i] ^= cipher.GetByte();
                 }
+                cipher = new Cipher(password); // HV1 encrypts the header with OldCipher and the file with Cipher (this ensures backwards compatibility)
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
                     fileBuffer[i] ^= cipher.GetByte();
