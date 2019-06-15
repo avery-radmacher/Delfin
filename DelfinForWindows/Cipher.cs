@@ -1,4 +1,4 @@
-﻿// Author Avery Radmacher 201904102239
+﻿// Author Avery Radmacher 201906151412
 
 using System;
 using System.Diagnostics;
@@ -555,7 +555,6 @@ namespace DelfinForWindows
 }
 
 // OLD CIPHER CODE //
-// Author Avery Radmacher 201812302049
 
 namespace DelfinForWindows
 {
@@ -609,8 +608,8 @@ namespace DelfinForWindows
                 // 2.
                 for (int i = 0; i < 5; i++)
                 {
-                    if (true || (LFSRs[i] & 16) == majorityBit)
-                    {
+                    // if (true || (LFSRs[i] & 16) == majorityBit)
+                    // {
                         if ((LFSRs[i] & 1) == 1)
                         {
                             LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
@@ -619,7 +618,7 @@ namespace DelfinForWindows
                         {
                             LFSRs[i] = LFSRs[i] >> 1;
                         }
-                    }
+                    // }
                 }
 
                 // 3.
