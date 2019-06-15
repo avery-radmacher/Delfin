@@ -550,3 +550,118 @@ namespace DelfinForWindows
         }
     }
 }
+
+// OLD CIPHER CODE //
+// Author Avery Radmacher 201812302049
+
+namespace DelfinForWindows
+{
+    /// <summary>
+    /// Represents a stream cipher with a 128-bit seed and a very long period.
+    /// </summary>
+    class OldCipher : Cipher
+    {
+        /// <summary>
+        /// Creates a new cipher from a string password.
+        /// </summary>
+        /// <param name="password">The string which will generate the seed. Can be any length.</param>
+        public Cipher(string password) : this(new System.Security.Cryptography.SHA1Managed().ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)))
+        { }
+
+        /// <summary>
+        /// Creates a new cipher from a 128-bit seed.
+        /// </summary>
+        /// <param name="initVector">The 128-bit seed of the cipher. Must be 16 bytes or more. Only the first 16 bytes are used.</param>
+        public Cipher(byte[] initVector)
+        {
+            if (initVector.Length < 16)
+            {
+                throw new System.ArgumentException("Initialization vector was less than 128 bits");
+            }
+
+            LFSRs = new int[5];
+            SRTaps = new int[5];
+            LFSRs[0] = (initVector[0] << 9) | (initVector[1] << 1) | (initVector[2] >> 7);
+            LFSRs[1] = ((initVector[2] & 127) << 11) | (initVector[3] << 3) | (initVector[4] >> 5);
+            LFSRs[2] = ((initVector[4] & 7) << 14) | (initVector[5] << 6) | (initVector[6] >> 2);
+            LFSRs[3] = ((initVector[6] & 3) << 19) | (initVector[7] << 11) | (initVector[8] << 3) | (initVector[9] >> 5);
+            LFSRs[4] = ((initVector[9] & 31) << 18) | (initVector[10] << 10) | (initVector[11] << 2) | (initVector[12] >> 6);
+            SRTaps[0] = TapCodes[0, initVector[12] & 63];
+            SRTaps[1] = TapCodes[1, initVector[13] >> 2];
+            SRTaps[2] = TapCodes[2, (initVector[13] & 3) << 4 | (initVector[14] >> 4)];
+            SRTaps[3] = TapCodes[3, (initVector[14] & 15) << 2 | (initVector[15] >> 6)];
+            SRTaps[4] = TapCodes[4, initVector[15] & 63];
+
+            // remove possibility of zero-valued LFSRs
+            for (int i = 0; i < 5; i++)
+            {
+                if (LFSRs[i] == 0)
+                {
+                    LFSRs[i] = 1;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculates and returns the next pseudorandom byte in the stream.
+        /// </summary>
+        public byte GetByte()
+        {
+            // Tick() calculates one bit
+            int Tick()
+            {
+                /* Algorithm:
+                 * 1. Find most popular bit state among 16s-place bit
+                 * 2. Tick all matching LFSRs
+                 * 3. XOR all 1s-bits and return
+                 */
+
+                // 1.
+                int num16sPlaceOnes = 0, majorityBit = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    if ((LFSRs[i] & 16) == 16)
+                    {
+                        num16sPlaceOnes++;
+                    }
+                }
+                if (num16sPlaceOnes > 2)
+                {
+                    majorityBit = 16; // majority bit in its place (10000₂)
+                }
+
+                // 2.
+                for (int i = 0; i < 5; i++)
+                {
+                    if (true || (LFSRs[i] & 16) == majorityBit)
+                    {
+                        if ((LFSRs[i] & 1) == 1)
+                        {
+                            LFSRs[i] = (LFSRs[i] >> 1) ^ SRTaps[i];
+                        }
+                        else
+                        {
+                            LFSRs[i] = LFSRs[i] >> 1;
+                        }
+                    }
+                }
+
+                // 3.
+                int resultBit = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    resultBit ^= LFSRs[i] & 1;
+                }
+                return resultBit;
+            }
+
+            // tick for a bit eight times and so build a byte
+            int result = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                result = (result << 1) | Tick();
+            }
+            return (byte)result;
+        }
+    }
+}
