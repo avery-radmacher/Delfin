@@ -580,7 +580,7 @@ namespace DelfinForWindows
             Header header = new Header();
             byte[] fileBuffer = null;
             Bitmap img;
-            Cipher cipher = password.Equals("") ? null : new Cipher(password);
+            Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
             // load image or quit on failure
             {
@@ -691,7 +691,13 @@ namespace DelfinForWindows
                                     return;
                                 }
 
-                                byteScan = 0;
+                                byteScan = 0; // lets loop know we are no longer reading the header
+                            }
+
+                            // for HV1, replace OldCipher with Cipher if non-null
+                            if(header.HeaderVersion == 1)
+                            {
+                                cipher = cipher == null ? null : new Cipher(password);
                             }
                         }
                     }
