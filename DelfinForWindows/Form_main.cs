@@ -469,6 +469,7 @@ namespace DelfinForWindows
         private void Button_Settings_Click(object sender, EventArgs e)
         {
             MessageBox.Show("In the future, this button will do something.", "Settings button");
+            UpdateFeed("The user is curious.");
         }
 
         // reveals/hides password
