@@ -16,5 +16,3 @@ To download and run Delfin, head over to the [releases](https://www.github.com/a
 ---
 
 Try and find the Easter eggs.
-
-edit test:)
