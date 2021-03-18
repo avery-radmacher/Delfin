@@ -20,7 +20,7 @@ namespace DelfinForWindows
     public partial class Form_main : Form
     {
         static string VERSION = "0.8";
-        static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        static Regex passwordRegex = new("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
 
         // flags
         MODE mode;
@@ -78,7 +78,7 @@ namespace DelfinForWindows
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_main));
+            System.ComponentModel.ComponentResourceManager resources = new(typeof(Form_main));
             this.button_encrypt = new System.Windows.Forms.Button();
             this.button_decrypt = new System.Windows.Forms.Button();
             this.button_selectImage = new System.Windows.Forms.Button();
@@ -538,7 +538,7 @@ namespace DelfinForWindows
         {
             try
             {
-                return longFileName.Substring(longFileName.LastIndexOf("\\") + 1);
+                return longFileName[(longFileName.LastIndexOf("\\") + 1)..];
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -578,7 +578,7 @@ namespace DelfinForWindows
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
-            Header header = new Header();
+            Header header = new();
             byte[] fileBuffer = null;
             Bitmap img;
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
@@ -796,7 +796,7 @@ namespace DelfinForWindows
             int population = 0;
             int datum;
             Bitmap img;
-            Header header = new Header();
+            Header header = new();
             byte[] headerBuffer;
             byte[] fileBuffer;
 
