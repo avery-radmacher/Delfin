@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cipher.cs" />
+    <Compile Include="DelfinWorker.cs" />
     <Compile Include="Form_main.cs">
       <SubType>Form</SubType>
     </Compile>
