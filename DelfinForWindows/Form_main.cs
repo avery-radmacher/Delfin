@@ -534,7 +534,7 @@ namespace DelfinForWindows
         }
 
         // returns a file's name when given a full path, if possible
-        private string ShortFileName(string longFileName)
+        private static string ShortFileName(string longFileName)
         {
             try
             {
@@ -547,7 +547,7 @@ namespace DelfinForWindows
         }
 
         // check whether password contains only valid characters
-        private bool IsPasswordValid(string s)
+        private static bool IsPasswordValid(string s)
         {
             return passwordRegex.IsMatch(s);
         }
