@@ -1085,9 +1085,9 @@ namespace DelfinForWindows
         }
 
         // check whether password contains only valid characters
-        public static bool IsValidPassword(this string s)
+        public static bool IsValidPassword(this string password)
         {
-            return passwordRegex.IsMatch(s);
+            return passwordRegex.IsMatch(password);
         }
     }
 }
