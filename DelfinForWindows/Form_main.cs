@@ -19,8 +19,7 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.8";
-        static Regex passwordRegex = new Regex("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        static readonly string VERSION = "0.8";
 
         // flags
         MODE mode;
@@ -49,23 +48,23 @@ namespace DelfinForWindows
         private Button button_Settings;
 
         #region info texts
-        private static string cancelDecryptionInfo = "Cancel the decryption.";
-        private static string cancelEncryptionInfo = "Cancel the encryption.";
-        private static string cancellationInfo = "To abort the running operation, click cancel.";
-        private static string decryptionInfo = "Extract the compressed files from an image.";
-        private static string encryptionInfo = "Encrypt a compressed file into an image.";
-        private static string feedInfo = "A description of recent actions and events will appear in the feed.";
-        private static string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
-        private static string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
-        private static string mainWelcomeInfo = "To continue, select an option from the left.\r\n\r\nMouse over an option to learn more.";
-        private static string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: !@#$%^&*()-_=+[{]}\\|;:'\",<.>/?\r\n\r\nDouble-click to reveal the password.";
-        private static string runDecryptionInfo = "Decrypt the file from the image.";
-        private static string runEncryptionInfo = "Encrypt the file into the image.";
-        private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
-        private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
-        private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static String settingsInfo = "Click to view and edit settings.";
-        private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
+        private static readonly string cancelDecryptionInfo = "Cancel the decryption.";
+        private static readonly string cancelEncryptionInfo = "Cancel the encryption.";
+        private static readonly string cancellationInfo = "To abort the running operation, click cancel.";
+        private static readonly string decryptionInfo = "Extract the compressed files from an image.";
+        private static readonly string encryptionInfo = "Encrypt a compressed file into an image.";
+        private static readonly string feedInfo = "A description of recent actions and events will appear in the feed.";
+        private static readonly string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
+        private static readonly string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
+        private static readonly string mainWelcomeInfo = "To continue, select an option from the left.\r\n\r\nMouse over an option to learn more.";
+        private static readonly string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: !@#$%^&*()-_=+[{]}\\|;:'\",<.>/?\r\n\r\nDouble-click to reveal the password.";
+        private static readonly string runDecryptionInfo = "Decrypt the file from the image.";
+        private static readonly string runEncryptionInfo = "Encrypt the file into the image.";
+        private static readonly string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
+        private static readonly string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
+        private static readonly string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
+        private static readonly string settingsInfo = "Click to view and edit settings.";
+        private static readonly string startupInfo = $"Delfin {VERSION}\r\nWelcome to Delfin for Windows.";
         #endregion
 
         public Form_main()
@@ -78,7 +77,7 @@ namespace DelfinForWindows
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_main));
+            System.ComponentModel.ComponentResourceManager resources = new(typeof(Form_main));
             this.button_encrypt = new System.Windows.Forms.Button();
             this.button_decrypt = new System.Windows.Forms.Button();
             this.button_selectImage = new System.Windows.Forms.Button();
@@ -382,7 +381,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Image selected: " + ShortFileName(openFileDialog_image.FileName));
+                    UpdateFeed($"Image selected: {openFileDialog_image.FileName.ShortFileName()}");
                 }
                 else
                 {
@@ -404,7 +403,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Zip file selected: " + ShortFileName(openFileDialog_zip.FileName));
+                    UpdateFeed($"Zip file selected: {openFileDialog_zip.FileName.ShortFileName()}");
                 }
                 else
                 {
@@ -418,7 +417,7 @@ namespace DelfinForWindows
         // runs the encryption or decryption on a background thread
         private void Button_execute_Click(object sender, EventArgs e)
         {
-            if (textBox_password.Text.Length != 0 && !IsPasswordValid(textBox_password.Text))
+            if (textBox_password.Text.Length != 0 && !textBox_password.Text.IsValidPassword())
             {
                 MessageBox.Show("The password field contains an invalid password. Please enter a valid password or leave the password field blank.", "Invalid password");
                 return;
@@ -533,25 +532,6 @@ namespace DelfinForWindows
             MessageBox.Show(text, caption);
         }
 
-        // returns a file's name when given a full path, if possible
-        private string ShortFileName(string longFileName)
-        {
-            try
-            {
-                return longFileName.Substring(longFileName.LastIndexOf("\\") + 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return longFileName;
-            }
-        }
-
-        // check whether password contains only valid characters
-        private bool IsPasswordValid(string s)
-        {
-            return passwordRegex.IsMatch(s);
-        }
-
         // string imgName, string password
         private void Decrypt(object args)
         {
@@ -578,7 +558,7 @@ namespace DelfinForWindows
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
-            Header header = new Header();
+            Header header = new();
             byte[] fileBuffer = null;
             Bitmap img;
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
@@ -598,13 +578,13 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
+                    MessageBox.Show($"The file\r\n{imgName}\r\nwas not found.", "File not found");
                     errMsg = "file not found";
                     return;
                 }
@@ -616,7 +596,7 @@ namespace DelfinForWindows
                 }
                 catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{imgName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -626,7 +606,7 @@ namespace DelfinForWindows
                 }
                 catch (ArgumentException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
+                    MessageBox.Show($"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
                     return;
                 }
@@ -736,7 +716,7 @@ namespace DelfinForWindows
                     ex is NotSupportedException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + saveFileDialog_zip.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{saveFileDialog_zip.FileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
@@ -748,7 +728,7 @@ namespace DelfinForWindows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_zip.FileName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{saveFileDialog_zip.FileName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -796,7 +776,7 @@ namespace DelfinForWindows
             int population = 0;
             int datum;
             Bitmap img;
-            Header header = new Header();
+            Header header = new();
             byte[] headerBuffer;
             byte[] fileBuffer;
 
@@ -814,13 +794,13 @@ namespace DelfinForWindows
                 ex is NotSupportedException)
             {
                 // path is null, empty, or invalid due to length, drive, or characters
-                MessageBox.Show("The path\r\n" + fileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                MessageBox.Show($"The path\r\n{fileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                 errMsg = "invalid path name";
                 return;
             }
             catch (FileNotFoundException)
             {
-                MessageBox.Show("The file\r\n" + fileName + "\r\nwas not found.", "File not found");
+                MessageBox.Show($"The file\r\n{fileName}\r\nwas not found.", "File not found");
                 errMsg = "file not found";
                 return;
             }
@@ -832,7 +812,7 @@ namespace DelfinForWindows
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
             {
-                MessageBox.Show("You don't have permission to access the file:\r\n" + fileName, "Unauthorized access");
+                MessageBox.Show($"You don't have permission to access the file:\r\n{fileName}", "Unauthorized access");
                 errMsg = "unauthorized access";
                 return;
             }
@@ -852,13 +832,13 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
+                    MessageBox.Show($"The file\r\n{imgName}\r\nwas not found.", "File not found");
                     errMsg = "file not found";
                     return;
                 }
@@ -870,7 +850,7 @@ namespace DelfinForWindows
                 }
                 catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{imgName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -880,7 +860,7 @@ namespace DelfinForWindows
                 }
                 catch (ArgumentException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
+                    MessageBox.Show($"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
                     return;
                 }
@@ -989,7 +969,7 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + saveFileDialog_image.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{saveFileDialog_image.FileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
@@ -1001,7 +981,7 @@ namespace DelfinForWindows
                 }
                 catch (System.Security.SecurityException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_image.FileName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{saveFileDialog_image.FileName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -1023,7 +1003,7 @@ namespace DelfinForWindows
         // called on its own thread to manage a decryption
         private void DecryptWrapper(object args)
         {
-            UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
+            UpdateFeed($"Decrypting {openFileDialog_image.FileName.ShortFileName()}...");
             //Decrypt(args);
             backgroundProcess = new Thread(Decrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1035,8 +1015,8 @@ namespace DelfinForWindows
             }
             else
             {
-                UpdateFeed("Decryption failed. Reason: " + errMsg);
-                ShowMessage("Decryption failed. Reason: " + errMsg, "Failed decryption");
+                UpdateFeed($"Decryption failed. Reason: {errMsg}");
+                ShowMessage($"Decryption failed. Reason: {errMsg}", "Failed decryption");
             }
 
             InitializeStateAndButtons();
@@ -1045,7 +1025,7 @@ namespace DelfinForWindows
         // called on its own thread to manage an encryption
         private void EncryptWrapper(object args)
         {
-            UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
+            UpdateFeed($"Encrypting {openFileDialog_zip.FileName.ShortFileName()} into {openFileDialog_image.FileName.ShortFileName()}...");
             //Encrypt(args);
             backgroundProcess = new Thread(Encrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1057,8 +1037,8 @@ namespace DelfinForWindows
             }
             else
             {
-                UpdateFeed("Encryption failed. Reason: " + errMsg);
-                ShowMessage("Encryption failed. Reason: " + errMsg, "Failed encryption");
+                UpdateFeed($"Encryption failed. Reason: {errMsg}");
+                ShowMessage($"Encryption failed. Reason: {errMsg}", "Failed encryption");
             }
 
             InitializeStateAndButtons();
@@ -1084,6 +1064,30 @@ namespace DelfinForWindows
             SetInfoText(mainWelcomeInfo);
             midgroundProcess = null;
             backgroundProcess = null;
+        }
+    }
+
+    public static class Helpers
+    {
+        private static readonly Regex passwordRegex = new(@"\A[0-9A-Za-z!@#$%^&*()\-_=+[{\]}\\|;:'"",<.>/?]+\z");
+
+        // returns a file's name when given a full path, if possible
+        public static string ShortFileName(this string longFileName)
+        {
+            try
+            {
+                return longFileName[(longFileName.LastIndexOf("\\") + 1)..];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return longFileName;
+            }
+        }
+
+        // check whether password contains only valid characters
+        public static bool IsValidPassword(this string password)
+        {
+            return passwordRegex.IsMatch(password);
         }
     }
 }
