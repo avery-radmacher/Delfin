@@ -63,7 +63,7 @@ namespace DelfinForWindows
         private static readonly string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
         private static readonly string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
         private static readonly string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static readonly String settingsInfo = "Click to view and edit settings.";
+        private static readonly string settingsInfo = "Click to view and edit settings.";
         private static readonly string startupInfo = $"Delfin {VERSION}\r\nWelcome to Delfin for Windows.";
         #endregion
 
