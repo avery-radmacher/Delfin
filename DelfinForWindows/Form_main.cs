@@ -20,7 +20,7 @@ namespace DelfinForWindows
     public partial class Form_main : Form
     {
         static string VERSION = "0.8";
-        static Regex passwordRegex = new("\\A[0-9A-Za-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-_\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\<\\.\\>\\/\\?]+\\z");
+        static Regex passwordRegex = new(@"\A[0-9A-Za-z!@#$%^&*()\-_=+[{\]}\\|;:'"",<.>/?]+\z");
 
         // flags
         MODE mode;
