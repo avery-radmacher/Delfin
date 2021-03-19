@@ -19,7 +19,7 @@ namespace DelfinForWindows
     
     public partial class Form_main : Form
     {
-        static string VERSION = "0.8";
+        static readonly string VERSION = "0.8";
 
         // flags
         MODE mode;
