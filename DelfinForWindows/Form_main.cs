@@ -48,23 +48,23 @@ namespace DelfinForWindows
         private Button button_Settings;
 
         #region info texts
-        private static string cancelDecryptionInfo = "Cancel the decryption.";
-        private static string cancelEncryptionInfo = "Cancel the encryption.";
-        private static string cancellationInfo = "To abort the running operation, click cancel.";
-        private static string decryptionInfo = "Extract the compressed files from an image.";
-        private static string encryptionInfo = "Encrypt a compressed file into an image.";
-        private static string feedInfo = "A description of recent actions and events will appear in the feed.";
-        private static string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
-        private static string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
-        private static string mainWelcomeInfo = "To continue, select an option from the left.\r\n\r\nMouse over an option to learn more.";
-        private static string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: !@#$%^&*()-_=+[{]}\\|;:'\",<.>/?\r\n\r\nDouble-click to reveal the password.";
-        private static string runDecryptionInfo = "Decrypt the file from the image.";
-        private static string runEncryptionInfo = "Encrypt the file into the image.";
-        private static string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
-        private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
-        private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
-        private static String settingsInfo = "Click to view and edit settings.";
-        private static string startupInfo = $"Delfin {VERSION}\r\nWelcome to Delfin for Windows.";
+        private static readonly string cancelDecryptionInfo = "Cancel the decryption.";
+        private static readonly string cancelEncryptionInfo = "Cancel the encryption.";
+        private static readonly string cancellationInfo = "To abort the running operation, click cancel.";
+        private static readonly string decryptionInfo = "Extract the compressed files from an image.";
+        private static readonly string encryptionInfo = "Encrypt a compressed file into an image.";
+        private static readonly string feedInfo = "A description of recent actions and events will appear in the feed.";
+        private static readonly string mainDecryptInfo = "Choose an image to decrypt and specify a password for access. Leave password blank if there is no password. When you are ready, click run to select a save destination.";
+        private static readonly string mainEncryptInfo = "Choose an image and a .zip file to encrypt in the image, optionally specifying a password for extra security. When you are ready, click run to select a save destination.";
+        private static readonly string mainWelcomeInfo = "To continue, select an option from the left.\r\n\r\nMouse over an option to learn more.";
+        private static readonly string passwordInfo = "Passwords are used to decrypt or encrypt with extra security. The password can contain these characters:\r\nLetters: a-z, A-Z\r\nDigits: 0-9\r\nSymbols: !@#$%^&*()-_=+[{]}\\|;:'\",<.>/?\r\n\r\nDouble-click to reveal the password.";
+        private static readonly string runDecryptionInfo = "Decrypt the file from the image.";
+        private static readonly string runEncryptionInfo = "Encrypt the file into the image.";
+        private static readonly string selectImageDecryptInfo = "Select the image from which to extract a file. Clicking again allows you to re-select an image file.";
+        private static readonly string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
+        private static readonly string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
+        private static readonly String settingsInfo = "Click to view and edit settings.";
+        private static readonly string startupInfo = $"Delfin {VERSION}\r\nWelcome to Delfin for Windows.";
         #endregion
 
         public Form_main()
