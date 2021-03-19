@@ -65,7 +65,7 @@ namespace DelfinForWindows
         private static string selectImageEncryptInfo = "Select the image into which a file will be encrypted. Clicking again allows you to re-select an image file.";
         private static string selectZipEncryptInfo = "Select a .zip file to encrypt within an image. Clicking again allows you to re-select a file.";
         private static String settingsInfo = "Click to view and edit settings.";
-        private static string startupInfo = "Delfin " + VERSION + "\r\nWelcome to Delfin for Windows.";
+        private static string startupInfo = $"Delfin {VERSION}\r\nWelcome to Delfin for Windows.";
         #endregion
 
         public Form_main()
@@ -382,7 +382,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Image selected: " + openFileDialog_image.FileName.ShortFileName());
+                    UpdateFeed($"Image selected: {openFileDialog_image.FileName.ShortFileName()}");
                 }
                 else
                 {
@@ -404,7 +404,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Zip file selected: " + openFileDialog_zip.FileName.ShortFileName());
+                    UpdateFeed($"Zip file selected: {openFileDialog_zip.FileName.ShortFileName()}");
                 }
                 else
                 {
@@ -585,13 +585,13 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
+                    MessageBox.Show($"The file\r\n{imgName}\r\nwas not found.", "File not found");
                     errMsg = "file not found";
                     return;
                 }
@@ -603,7 +603,7 @@ namespace DelfinForWindows
                 }
                 catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{imgName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -613,7 +613,7 @@ namespace DelfinForWindows
                 }
                 catch (ArgumentException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
+                    MessageBox.Show($"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
                     return;
                 }
@@ -723,7 +723,7 @@ namespace DelfinForWindows
                     ex is NotSupportedException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + saveFileDialog_zip.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{saveFileDialog_zip.FileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
@@ -735,7 +735,7 @@ namespace DelfinForWindows
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_zip.FileName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{saveFileDialog_zip.FileName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -801,13 +801,13 @@ namespace DelfinForWindows
                 ex is NotSupportedException)
             {
                 // path is null, empty, or invalid due to length, drive, or characters
-                MessageBox.Show("The path\r\n" + fileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                MessageBox.Show($"The path\r\n{fileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                 errMsg = "invalid path name";
                 return;
             }
             catch (FileNotFoundException)
             {
-                MessageBox.Show("The file\r\n" + fileName + "\r\nwas not found.", "File not found");
+                MessageBox.Show($"The file\r\n{fileName}\r\nwas not found.", "File not found");
                 errMsg = "file not found";
                 return;
             }
@@ -819,7 +819,7 @@ namespace DelfinForWindows
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
             {
-                MessageBox.Show("You don't have permission to access the file:\r\n" + fileName, "Unauthorized access");
+                MessageBox.Show($"You don't have permission to access the file:\r\n{fileName}", "Unauthorized access");
                 errMsg = "unauthorized access";
                 return;
             }
@@ -839,13 +839,13 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + imgName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\nwas not found.", "File not found");
+                    MessageBox.Show($"The file\r\n{imgName}\r\nwas not found.", "File not found");
                     errMsg = "file not found";
                     return;
                 }
@@ -857,7 +857,7 @@ namespace DelfinForWindows
                 }
                 catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + imgName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{imgName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -867,7 +867,7 @@ namespace DelfinForWindows
                 }
                 catch (ArgumentException)
                 {
-                    MessageBox.Show("The file\r\n" + imgName + "\r\ncould not be interpreted as a valid image.", "Invalid image");
+                    MessageBox.Show($"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.", "Invalid image");
                     errMsg = "invalid image file";
                     return;
                 }
@@ -976,7 +976,7 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    MessageBox.Show("The path\r\n" + saveFileDialog_image.FileName + "\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
+                    MessageBox.Show($"The path\r\n{saveFileDialog_image.FileName}\r\nis not a valid path. Please specify a valid path.", "Invalid path name");
                     errMsg = "invalid path name";
                     return;
                 }
@@ -988,7 +988,7 @@ namespace DelfinForWindows
                 }
                 catch (System.Security.SecurityException)
                 {
-                    MessageBox.Show("You don't have permission to access the file:\r\n" + saveFileDialog_image.FileName, "Unauthorized access");
+                    MessageBox.Show($"You don't have permission to access the file:\r\n{saveFileDialog_image.FileName}", "Unauthorized access");
                     errMsg = "unauthorized access";
                     return;
                 }
@@ -1010,7 +1010,7 @@ namespace DelfinForWindows
         // called on its own thread to manage a decryption
         private void DecryptWrapper(object args)
         {
-            UpdateFeed("Decrypting " + openFileDialog_image.FileName.ShortFileName() + "...");
+            UpdateFeed($"Decrypting {openFileDialog_image.FileName.ShortFileName()}...");
             //Decrypt(args);
             backgroundProcess = new Thread(Decrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1022,8 +1022,8 @@ namespace DelfinForWindows
             }
             else
             {
-                UpdateFeed("Decryption failed. Reason: " + errMsg);
-                ShowMessage("Decryption failed. Reason: " + errMsg, "Failed decryption");
+                UpdateFeed($"Decryption failed. Reason: {errMsg}");
+                ShowMessage($"Decryption failed. Reason: {errMsg}", "Failed decryption");
             }
 
             InitializeStateAndButtons();
@@ -1032,7 +1032,7 @@ namespace DelfinForWindows
         // called on its own thread to manage an encryption
         private void EncryptWrapper(object args)
         {
-            UpdateFeed("Encrypting " + openFileDialog_zip.FileName.ShortFileName() + " into " + openFileDialog_image.FileName.ShortFileName() + "...");
+            UpdateFeed($"Encrypting {openFileDialog_zip.FileName.ShortFileName()} into {openFileDialog_image.FileName.ShortFileName()}...");
             //Encrypt(args);
             backgroundProcess = new Thread(Encrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1044,8 +1044,8 @@ namespace DelfinForWindows
             }
             else
             {
-                UpdateFeed("Encryption failed. Reason: " + errMsg);
-                ShowMessage("Encryption failed. Reason: " + errMsg, "Failed encryption");
+                UpdateFeed($"Encryption failed. Reason: {errMsg}");
+                ShowMessage($"Encryption failed. Reason: {errMsg}", "Failed encryption");
             }
 
             InitializeStateAndButtons();
