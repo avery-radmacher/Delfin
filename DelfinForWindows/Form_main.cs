@@ -382,7 +382,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Image selected: " + ShortFileName(openFileDialog_image.FileName));
+                    UpdateFeed("Image selected: " + openFileDialog_image.FileName.ShortFileName());
                 }
                 else
                 {
@@ -404,7 +404,7 @@ namespace DelfinForWindows
                     {
                         button_execute.Enabled = true;
                     }
-                    UpdateFeed("Zip file selected: " + ShortFileName(openFileDialog_zip.FileName));
+                    UpdateFeed("Zip file selected: " + openFileDialog_zip.FileName.ShortFileName());
                 }
                 else
                 {
@@ -531,19 +531,6 @@ namespace DelfinForWindows
             }
 
             MessageBox.Show(text, caption);
-        }
-
-        // returns a file's name when given a full path, if possible
-        private static string ShortFileName(string longFileName)
-        {
-            try
-            {
-                return longFileName[(longFileName.LastIndexOf("\\") + 1)..];
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return longFileName;
-            }
         }
 
         // check whether password contains only valid characters
@@ -1023,7 +1010,7 @@ namespace DelfinForWindows
         // called on its own thread to manage a decryption
         private void DecryptWrapper(object args)
         {
-            UpdateFeed("Decrypting " + ShortFileName(openFileDialog_image.FileName) + "...");
+            UpdateFeed("Decrypting " + openFileDialog_image.FileName.ShortFileName() + "...");
             //Decrypt(args);
             backgroundProcess = new Thread(Decrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1045,7 +1032,7 @@ namespace DelfinForWindows
         // called on its own thread to manage an encryption
         private void EncryptWrapper(object args)
         {
-            UpdateFeed("Encrypting " + ShortFileName(openFileDialog_zip.FileName) + " into " + ShortFileName(openFileDialog_image.FileName) + "...");
+            UpdateFeed("Encrypting " + openFileDialog_zip.FileName.ShortFileName() + " into " + openFileDialog_image.FileName.ShortFileName() + "...");
             //Encrypt(args);
             backgroundProcess = new Thread(Encrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
@@ -1084,6 +1071,22 @@ namespace DelfinForWindows
             SetInfoText(mainWelcomeInfo);
             midgroundProcess = null;
             backgroundProcess = null;
+        }
+    }
+
+    public static class Helpers
+    {
+        // returns a file's name when given a full path, if possible
+        public static string ShortFileName(this string longFileName)
+        {
+            try
+            {
+                return longFileName[(longFileName.LastIndexOf("\\") + 1)..];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return longFileName;
+            }
         }
     }
 }
