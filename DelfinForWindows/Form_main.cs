@@ -20,7 +20,6 @@ namespace DelfinForWindows
     public partial class Form_main : Form
     {
         static string VERSION = "0.8";
-        static Regex passwordRegex = new(@"\A[0-9A-Za-z!@#$%^&*()\-_=+[{\]}\\|;:'"",<.>/?]+\z");
 
         // flags
         MODE mode;
@@ -418,7 +417,7 @@ namespace DelfinForWindows
         // runs the encryption or decryption on a background thread
         private void Button_execute_Click(object sender, EventArgs e)
         {
-            if (textBox_password.Text.Length != 0 && !IsPasswordValid(textBox_password.Text))
+            if (textBox_password.Text.Length != 0 && !textBox_password.Text.IsValidPassword())
             {
                 MessageBox.Show("The password field contains an invalid password. Please enter a valid password or leave the password field blank.", "Invalid password");
                 return;
@@ -531,12 +530,6 @@ namespace DelfinForWindows
             }
 
             MessageBox.Show(text, caption);
-        }
-
-        // check whether password contains only valid characters
-        private static bool IsPasswordValid(string s)
-        {
-            return passwordRegex.IsMatch(s);
         }
 
         // string imgName, string password
@@ -1076,6 +1069,8 @@ namespace DelfinForWindows
 
     public static class Helpers
     {
+        private static readonly Regex passwordRegex = new(@"\A[0-9A-Za-z!@#$%^&*()\-_=+[{\]}\\|;:'"",<.>/?]+\z");
+
         // returns a file's name when given a full path, if possible
         public static string ShortFileName(this string longFileName)
         {
@@ -1087,6 +1082,12 @@ namespace DelfinForWindows
             {
                 return longFileName;
             }
+        }
+
+        // check whether password contains only valid characters
+        public static bool IsValidPassword(this string s)
+        {
+            return passwordRegex.IsMatch(s);
         }
     }
 }
