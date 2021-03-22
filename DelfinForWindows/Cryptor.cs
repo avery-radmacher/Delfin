@@ -11,6 +11,72 @@ namespace DelfinForWindows
         public string ErrDescription { get; internal set; }
     }
 
+    public class IOHandler
+    {
+        public delegate void ErrorHandler(string errMsg, string errDescription);
+
+        public delegate void LoadImageHandler(Bitmap bitmap);
+
+        public ErrorHandler OnError { get; }
+
+        public LoadImageHandler OnSuccess { get; }
+
+        public void LoadImage(string imgName)
+        {
+            FileStream reader;
+            try
+            {
+                reader = new FileStream(imgName, FileMode.Open);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is ArgumentNullException ||
+                ex is DirectoryNotFoundException ||
+                ex is NotSupportedException ||
+                ex is PathTooLongException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                OnError("invalid path name", $"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.");
+                return;
+            }
+            catch (FileNotFoundException)
+            {
+                OnError("file not found", $"The file\r\n{imgName}\r\nwas not found.");
+                return;
+            }
+            catch (IOException)
+            {
+                OnError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                return;
+            }
+            catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
+            {
+                OnError("unauthorized access", $"You don't have permission to access the file:\r\n{imgName}");
+                return;
+            }
+
+            Bitmap img = null;
+            bool hasImage = false;
+            try
+            {
+                img = new Bitmap(reader);
+                hasImage = true;
+            }
+            catch (ArgumentException)
+            {
+                OnError("invalid image file", $"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.");
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            if (hasImage)
+            {
+                OnSuccess(img);
+            }
+        }
+    }
+
     public class Cryptor
     {
         // string imgName, string password
