@@ -15,7 +15,7 @@ namespace DelfinForWindows
     {
         public delegate void ErrorHandler(string errMsg, string errDescription);
         public delegate void LoadImageHandler(Bitmap bitmap);
-        public delegate void LoadFileHandler(byte[] filebuffer);
+        public delegate void LoadFileHandler(byte[] filebuffer, long fileSize);
         public delegate void SaveImageHandler();
         public delegate void SaveFileHandler();
 
@@ -86,9 +86,11 @@ namespace DelfinForWindows
 
         public void LoadFile(string filename)
         {
+            long fileSize;
             byte[] fileBuffer;
             try
             {
+                fileSize = new FileInfo(filename).Length;
                 fileBuffer = File.ReadAllBytes(filename);
             }
             catch (Exception ex) when
@@ -118,7 +120,7 @@ namespace DelfinForWindows
                 return;
             }
 
-            OnLoadFile(fileBuffer);
+            OnLoadFile(fileBuffer, fileSize);
         }
 
         public void SaveImage(string filename, Bitmap image)
