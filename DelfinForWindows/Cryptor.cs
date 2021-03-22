@@ -14,16 +14,20 @@ namespace DelfinForWindows
     public class IOHandler
     {
         public delegate void ErrorHandler(string errMsg, string errDescription);
-
         public delegate void LoadImageHandler(Bitmap bitmap);
-
+        public delegate void LoadFileHandler(byte[] filebuffer);
+        public delegate void SaveImageHandler();
         public delegate void SaveFileHandler();
 
         public ErrorHandler OnError { get; }
 
-        public LoadImageHandler OnLoadImageSuccess { get; }
+        public LoadImageHandler OnLoadImage { get; }
 
-        public SaveFileHandler OnSaveFileSuccess { get; }
+        public LoadFileHandler OnLoadFile { get; }
+
+        public SaveImageHandler OnSaveImage { get; }
+
+        public SaveFileHandler OnSaveFile { get; }
 
         public void LoadImage(string imgName)
         {
@@ -76,7 +80,88 @@ namespace DelfinForWindows
 
             if (hasImage)
             {
-                OnLoadImageSuccess(img);
+                OnLoadImage(img);
+            }
+        }
+
+        public void LoadFile(string filename)
+        {
+            byte[] fileBuffer;
+            try
+            {
+                fileBuffer = File.ReadAllBytes(filename);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is ArgumentNullException ||
+                ex is PathTooLongException ||
+                ex is DirectoryNotFoundException ||
+                ex is NotSupportedException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                OnError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
+                return;
+            }
+            catch (FileNotFoundException)
+            {
+                OnError("file not found", $"The file\r\n{filename}\r\nwas not found.");
+                return;
+            }
+            catch (IOException)
+            {
+                OnError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                return;
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
+            {
+                OnError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
+                return;
+            }
+
+            OnLoadFile(fileBuffer);
+        }
+
+        public void SaveImage(string filename, Bitmap image)
+        {
+            if (filename.EndsWith(".png"))
+            {
+                FileStream writer;
+                try
+                {
+                    writer = new FileStream(filename, FileMode.Create);
+                }
+                catch (Exception ex) when
+                    (ex is ArgumentException ||
+                    ex is NotSupportedException ||
+                    ex is ArgumentNullException ||
+                    ex is DirectoryNotFoundException ||
+                    ex is PathTooLongException)
+                {
+                    // path is null, empty, or invalid due to length, drive, or characters
+                    OnError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
+                    return;
+                }
+                catch (IOException)
+                {
+                    OnError("unexpected I/O error", "An I/O error occurred while using the file.");
+                    return;
+                }
+                catch (System.Security.SecurityException)
+                {
+                    OnError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
+                    return;
+                }
+
+                image.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
+                writer.Close();
+                writer.Dispose();
+                OnSaveImage();
+                return;
+            }
+            else
+            {
+                OnError("canceled operation", "The file was not saved.");
+                return;
             }
         }
 
@@ -115,7 +200,7 @@ namespace DelfinForWindows
                 writer.Flush();
                 writer.Close();
                 writer.Dispose();
-                OnSaveFileSuccess();
+                OnSaveFile();
                 return;
             }
             else
