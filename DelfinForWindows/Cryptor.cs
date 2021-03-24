@@ -216,7 +216,7 @@ namespace DelfinForWindows
     public class Cryptor
     {
         // string imgName, string password
-        public static void Decrypt(string imgName, string password, Func<string> GetSaveFilename, Action<CryptionResult> ProcessResult)
+        public static void Decrypt(string imgName, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
             long pixScan = 0, byteScan = -1;
             int color;
@@ -408,7 +408,6 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            string saveFilename = GetSaveFilename() ?? "";
             if (saveFilename.EndsWith(".zip"))
             {
                 BinaryWriter writer;
@@ -477,7 +476,7 @@ namespace DelfinForWindows
         }
 
         // string imgName, string fileName, string password
-        public static void Encrypt(string imgName, string filename, string password, Func<string> GetSaveFilename, Action<CryptionResult> ProcessResult)
+        public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
             long pixScan = 0, byteScan, fileSize;
             int pixX, pixY;
@@ -714,7 +713,6 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            string saveFilename = GetSaveFilename() ?? "";
             if (saveFilename.EndsWith(".png"))
             {
                 FileStream writer;
