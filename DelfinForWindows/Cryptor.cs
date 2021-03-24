@@ -208,6 +208,13 @@ namespace DelfinForWindows
         // string imgName, string password
         public static void Decrypt(string imgName, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
+            bool quit = false;
+            void HandleError(string err, string errDesc)
+            {
+                quit = true;
+                ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
             long pixScan = 0, byteScan = -1;
             int color;
             byte[] pairBuffer = new byte[6];
@@ -215,84 +222,12 @@ namespace DelfinForWindows
             int datum;
             Header header = new();
             byte[] fileBuffer = null;
-            Bitmap img;
+            Bitmap img = null;
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
             // load image or quit on failure
-            {
-                FileStream reader;
-                try
-                {
-                    reader = new FileStream(imgName, FileMode.Open);
-                }
-                catch (Exception ex) when
-                    (ex is ArgumentException ||
-                    ex is ArgumentNullException ||
-                    ex is DirectoryNotFoundException ||
-                    ex is NotSupportedException ||
-                    ex is PathTooLongException)
-                {
-                    // path is null, empty, or invalid due to length, drive, or characters
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid path name",
-                        ErrDescription = $"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (FileNotFoundException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "file not found",
-                        ErrDescription = $"The file\r\n{imgName}\r\nwas not found.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (IOException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "An I/O error occurred while opening the file.",
-                        ErrDescription = "unexpected I/O error",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unauthorized access",
-                        ErrDescription = $"You don't have permission to access the file:\r\n{imgName}",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                try
-                {
-                    img = new Bitmap(reader);
-                }
-                catch (ArgumentException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid image file",
-                        ErrDescription = $"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                reader.Close();
-                reader.Dispose();
-            }
+            IOHandler.LoadImage(imgName, bitmap => img = bitmap, HandleError);
+            if (quit) return;
 
             // main data-processing loop
             while (!header.IsComplete || byteScan < header.FileSize)
@@ -398,219 +333,37 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            if (saveFilename.EndsWith(".zip"))
-            {
-                BinaryWriter writer;
-                try
-                {
-                    writer = new BinaryWriter(File.Open(saveFilename, FileMode.Create));
-                    writer.Write(fileBuffer);
-                }
-                catch (Exception ex) when
-                    (ex is ArgumentException ||
-                    ex is ArgumentNullException ||
-                    ex is PathTooLongException ||
-                    ex is DirectoryNotFoundException ||
-                    ex is NotSupportedException)
-                {
-                    // path is null, empty, or invalid due to length, drive, or characters
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid path name",
-                        ErrDescription = $"The path\r\n{saveFilename}\r\nis not a valid path. Please specify a valid path.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (IOException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unexpected I/O error",
-                        ErrDescription = "An I/O error occurred while using the file.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = $"You don't have permission to access the file:\r\n{saveFilename}",
-                        ErrDescription = "unauthorized access",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-
-                writer.Flush();
-                writer.Close();
-                writer.Dispose();
-                ProcessResult(new CryptionResult() { Success = true });
-                return;
-            }
-            else
-            {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "canceled operation",
-                    ErrDescription = "The file was not saved.",
-                };
-                ProcessResult(result);
-                return;
-            }
+            IOHandler.SaveFile(saveFilename, fileBuffer, () => ProcessResult(new() { Success = true }), HandleError);
         }
 
         // string imgName, string fileName, string password
         public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
-            long pixScan = 0, byteScan, fileSize;
+            bool quit = false;
+            void HandleError(string err, string errDesc)
+            {
+                quit = true;
+                ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
+            long pixScan = 0, byteScan, fileSize = 0;
             int pixX, pixY;
             int color, A, R, G, B;
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
-            Bitmap img;
+            Bitmap img = null;
             Header header = new();
             byte[] headerBuffer;
-            byte[] fileBuffer;
+            byte[] fileBuffer = null;
 
             // load the zip file or quit nicely on failure
-            try
-            {
-                fileSize = new FileInfo(filename).Length;
-                fileBuffer = File.ReadAllBytes(filename);
-            }
-            catch (Exception ex) when
-                (ex is ArgumentException ||
-                ex is ArgumentNullException ||
-                ex is PathTooLongException ||
-                ex is DirectoryNotFoundException ||
-                ex is NotSupportedException)
-            {
-                // path is null, empty, or invalid due to length, drive, or characters
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "invalid path name",
-                    ErrDescription = $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.",
-                };
-                ProcessResult(result);
-                return;
-            }
-            catch (FileNotFoundException)
-            {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "file not found",
-                    ErrDescription = $"The file\r\n{filename}\r\nwas not found.",
-                };
-                ProcessResult(result);
-                return;
-            }
-            catch (IOException)
-            {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "unexpected I/O error",
-                    ErrDescription = "An I/O error occurred while opening the file.",
-                };
-                ProcessResult(result);
-                return;
-            }
-            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
-            {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "unauthorized access",
-                    ErrDescription = $"You don't have permission to access the file:\r\n{filename}",
-                };
-                ProcessResult(result);
-                return;
-            }
+            IOHandler.LoadFile(filename, (buffer, size) => { fileBuffer = buffer; fileSize = size; }, HandleError);
+            if (quit) return;
 
             // load the image or quit nicely on failure
-            {
-                FileStream reader;
-                try
-                {
-                    reader = new FileStream(imgName, FileMode.Open);
-                }
-                catch (Exception ex) when
-                    (ex is ArgumentException ||
-                    ex is ArgumentNullException ||
-                    ex is DirectoryNotFoundException ||
-                    ex is NotSupportedException ||
-                    ex is PathTooLongException)
-                {
-                    // path is null, empty, or invalid due to length, drive, or characters
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid path name",
-                        ErrDescription = $"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (FileNotFoundException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "file not found",
-                        ErrDescription = $"The file\r\n{imgName}\r\nwas not found.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (IOException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unexpected I/O error",
-                        ErrDescription = "An I/O error occurred while opening the file.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unauthorized access",
-                        ErrDescription = $"You don't have permission to access the file:\r\n{imgName}",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                try
-                {
-                    img = new Bitmap(reader);
-                }
-                catch (ArgumentException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid image file",
-                        ErrDescription = $"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                reader.Close();
-                reader.Dispose();
-            }
+            IOHandler.LoadImage(imgName, bitmap => img = bitmap, HandleError);
+            if (quit) return;
 
             // initiailze header and related items
             header.FileSize = (int)fileSize;
@@ -703,70 +456,7 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            if (saveFilename.EndsWith(".png"))
-            {
-                FileStream writer;
-                try
-                {
-                    writer = new FileStream(saveFilename, FileMode.Create);
-                }
-                catch (Exception ex) when
-                    (ex is ArgumentException ||
-                    ex is NotSupportedException ||
-                    ex is ArgumentNullException ||
-                    ex is DirectoryNotFoundException ||
-                    ex is PathTooLongException)
-                {
-                    // path is null, empty, or invalid due to length, drive, or characters
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "invalid path name",
-                        ErrDescription = $"The path\r\n{saveFilename}\r\nis not a valid path. Please specify a valid path.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (IOException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unexpected I/O error",
-                        ErrDescription = "An I/O error occurred while using the file.",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-                catch (System.Security.SecurityException)
-                {
-                    CryptionResult result = new()
-                    {
-                        Success = false,
-                        ErrMsg = "unauthorized access",
-                        ErrDescription = $"You don't have permission to access the file:\r\n{saveFilename}",
-                    };
-                    ProcessResult(result);
-                    return;
-                }
-
-                img.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
-                writer.Close();
-                writer.Dispose();
-                ProcessResult(new CryptionResult() { Success = true });
-                return;
-            }
-            else
-            {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "canceled operation",
-                    ErrDescription = "The file was not saved.",
-                };
-                ProcessResult(result);
-                return;
-            }
+            IOHandler.SaveImage(saveFilename, img, () => ProcessResult(new() { Success = true }), HandleError);
         }
     }
 }
