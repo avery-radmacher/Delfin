@@ -19,17 +19,7 @@ namespace DelfinForWindows
         public delegate void SaveImageHandler();
         public delegate void SaveFileHandler();
 
-        public ErrorHandler OnError { get; }
-
-        public LoadImageHandler OnLoadImage { get; }
-
-        public LoadFileHandler OnLoadFile { get; }
-
-        public SaveImageHandler OnSaveImage { get; }
-
-        public SaveFileHandler OnSaveFile { get; }
-
-        public void LoadImage(string imgName)
+        public static void LoadImage(string imgName, LoadImageHandler onLoadImage, ErrorHandler onError)
         {
             FileStream reader;
             try
@@ -44,22 +34,22 @@ namespace DelfinForWindows
                 ex is PathTooLongException)
             {
                 // path is null, empty, or invalid due to length, drive, or characters
-                OnError("invalid path name", $"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.");
+                onError("invalid path name", $"The path\r\n{imgName}\r\nis not a valid path. Please specify a valid path.");
                 return;
             }
             catch (FileNotFoundException)
             {
-                OnError("file not found", $"The file\r\n{imgName}\r\nwas not found.");
+                onError("file not found", $"The file\r\n{imgName}\r\nwas not found.");
                 return;
             }
             catch (IOException)
             {
-                OnError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                onError("unexpected I/O error", "An I/O error occurred while opening the file.");
                 return;
             }
             catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
             {
-                OnError("unauthorized access", $"You don't have permission to access the file:\r\n{imgName}");
+                onError("unauthorized access", $"You don't have permission to access the file:\r\n{imgName}");
                 return;
             }
 
@@ -72,7 +62,7 @@ namespace DelfinForWindows
             }
             catch (ArgumentException)
             {
-                OnError("invalid image file", $"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.");
+                onError("invalid image file", $"The file\r\n{imgName}\r\ncould not be interpreted as a valid image.");
             }
 
             reader.Close();
@@ -80,11 +70,11 @@ namespace DelfinForWindows
 
             if (hasImage)
             {
-                OnLoadImage(img);
+                onLoadImage(img);
             }
         }
 
-        public void LoadFile(string filename)
+        public static void LoadFile(string filename, LoadFileHandler onLoadFile, ErrorHandler onError)
         {
             long fileSize;
             byte[] fileBuffer;
@@ -101,29 +91,29 @@ namespace DelfinForWindows
                 ex is NotSupportedException)
             {
                 // path is null, empty, or invalid due to length, drive, or characters
-                OnError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
+                onError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
                 return;
             }
             catch (FileNotFoundException)
             {
-                OnError("file not found", $"The file\r\n{filename}\r\nwas not found.");
+                onError("file not found", $"The file\r\n{filename}\r\nwas not found.");
                 return;
             }
             catch (IOException)
             {
-                OnError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                onError("unexpected I/O error", "An I/O error occurred while opening the file.");
                 return;
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
             {
-                OnError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
+                onError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
                 return;
             }
 
-            OnLoadFile(fileBuffer, fileSize);
+            onLoadFile(fileBuffer, fileSize);
         }
 
-        public void SaveImage(string filename, Bitmap image)
+        public static void SaveImage(string filename, Bitmap image, SaveImageHandler onSaveImage, ErrorHandler onError)
         {
             if (filename.EndsWith(".png"))
             {
@@ -140,34 +130,34 @@ namespace DelfinForWindows
                     ex is PathTooLongException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    OnError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
+                    onError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
                     return;
                 }
                 catch (IOException)
                 {
-                    OnError("unexpected I/O error", "An I/O error occurred while using the file.");
+                    onError("unexpected I/O error", "An I/O error occurred while using the file.");
                     return;
                 }
                 catch (System.Security.SecurityException)
                 {
-                    OnError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
+                    onError("unauthorized access", $"You don't have permission to access the file:\r\n{filename}");
                     return;
                 }
 
                 image.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
                 writer.Close();
                 writer.Dispose();
-                OnSaveImage();
+                onSaveImage();
                 return;
             }
             else
             {
-                OnError("canceled operation", "The file was not saved.");
+                onError("canceled operation", "The file was not saved.");
                 return;
             }
         }
 
-        public void SaveFile(string filename, byte[] fileBuffer)
+        public static void SaveFile(string filename, byte[] fileBuffer, SaveFileHandler onSaveFile, ErrorHandler onError)
         {
             if (filename.EndsWith(".zip"))
             {
@@ -185,29 +175,29 @@ namespace DelfinForWindows
                     ex is NotSupportedException)
                 {
                     // path is null, empty, or invalid due to length, drive, or characters
-                    OnError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
+                    onError("invalid path name", $"The path\r\n{filename}\r\nis not a valid path. Please specify a valid path.");
                     return;
                 }
                 catch (IOException)
                 {
-                    OnError("unexpected I/O error", "An I/O error occurred while using the file.");
+                    onError("unexpected I/O error", "An I/O error occurred while using the file.");
                     return;
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    OnError($"You don't have permission to access the file:\r\n{filename}", "unauthorized access");
+                    onError($"You don't have permission to access the file:\r\n{filename}", "unauthorized access");
                     return;
                 }
 
                 writer.Flush();
                 writer.Close();
                 writer.Dispose();
-                OnSaveFile();
+                onSaveFile();
                 return;
             }
             else
             {
-                OnError("canceled operation", "The file was not saved.");
+                onError("canceled operation", "The file was not saved.");
                 return;
             }
         }
