@@ -195,4 +195,72 @@ namespace IOHandler
             }
         }
     }
+
+    public interface IBitmapLoader
+    {
+        public ErrorHandler HandleError { get; }
+
+        public Bitmap Load();
+    }
+
+    public class FileSystemBitmapLoader : IBitmapLoader
+    {
+        public ErrorHandler HandleError { get; }
+
+        public string Filename { get; set; }
+
+        public FileSystemBitmapLoader(ErrorHandler errorHandler)
+        {
+            HandleError = errorHandler;
+        }
+
+        public Bitmap Load()
+        {
+            FileStream reader;
+            try
+            {
+                reader = new FileStream(Filename, FileMode.Open);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is ArgumentNullException ||
+                ex is DirectoryNotFoundException ||
+                ex is NotSupportedException ||
+                ex is PathTooLongException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
+                return null;
+            }
+            catch (FileNotFoundException)
+            {
+                HandleError("file not found", $"The file\r\n{Filename}\r\nwas not found.");
+                return null;
+            }
+            catch (IOException)
+            {
+                HandleError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                return null;
+            }
+            catch (Exception ex) when (ex is System.Security.SecurityException || ex is UnauthorizedAccessException)
+            {
+                HandleError("unauthorized access", $"You don't have permission to access the file:\r\n{Filename}");
+                return null;
+            }
+
+            Bitmap img = null;
+            try
+            {
+                img = new Bitmap(reader);
+            }
+            catch (ArgumentException)
+            {
+                HandleError("invalid image file", $"The file\r\n{Filename}\r\ncould not be interpreted as a valid image.");
+            }
+
+            reader.Dispose();
+
+            return img;
+        }
+    }
 }
