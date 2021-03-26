@@ -449,20 +449,21 @@ namespace DelfinForWindows
             // kill the background process if there is one
             if(backgroundProcess != null && backgroundProcess.IsAlive)
             {
-                backgroundProcess.Abort();
+                ShowMessage("Cancellation is temporarily unavailable. Please wait for a future release.", "Cannot cancel");
+                // backgroundProcess.Abort();
             }
 
-            // inform user
-            if (mode == MODE.ENCRYPT)
-            {
-                UpdateFeed("The encryption was cancelled.");
-            }
-            else if (mode == MODE.DECRYPT)
-            {
-                UpdateFeed("The decryption was cancelled.");
-            }
+            //// inform user
+            //if (mode == MODE.ENCRYPT)
+            //{
+            //    UpdateFeed("The encryption was cancelled.");
+            //}
+            //else if (mode == MODE.DECRYPT)
+            //{
+            //    UpdateFeed("The decryption was cancelled.");
+            //}
 
-            InitializeStateAndButtons();
+            //InitializeStateAndButtons();
         }
 
         private void Button_Settings_Click(object sender, EventArgs e)
