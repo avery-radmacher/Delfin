@@ -10,6 +10,14 @@ namespace IOHandler
     public delegate void SaveImageHandler();
     public delegate void SaveFileHandler();
 
+    internal static class IOHandlerDefaults
+    {
+        internal static void DefaultErrorHandler(string errMessage, string errDescription)
+        {
+            throw new Exception($"Error: {errMessage}\n\t{errDescription}");
+        }
+    }
+
     public class IOHandler
     {
         public static void LoadImage(string imgName, LoadImageHandler onLoadImage, ErrorHandler onError)
@@ -211,7 +219,7 @@ namespace IOHandler
 
         public FileSystemBitmapLoader(ErrorHandler errorHandler)
         {
-            HandleError = errorHandler;
+            HandleError = errorHandler ?? IOHandlerDefaults.DefaultErrorHandler;
         }
 
         public Bitmap Load()
