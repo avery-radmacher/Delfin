@@ -590,23 +590,6 @@ namespace DelfinForWindows
             Cryptor.Encrypt(imgName, fileName, password, saveFilename, (result) => ProcessResult(result, MODE.ENCRYPT));
         }
 
-        private void ProcessResult(CryptionResult result, MODE mode)
-        {
-            string modeString = mode == MODE.DECRYPT ? "Decryption" : "Encryption";
-            if(result.Success)
-            {
-                UpdateFeed($"{modeString} successful.");
-                ShowMessage($"{modeString} successful.", "Success");
-            }
-            else
-            {
-                UpdateFeed($"{modeString} failed. Reason: {result.ErrDescription}");
-                ShowMessage($"{modeString} failed. Reason: {result.ErrDescription}", $"{result.ErrMsg}");
-            }
-
-            InitializeStateAndButtons();
-        }
-
         // called on its own thread to manage a decryption
         private void DecryptWrapper(object args)
         {
@@ -626,6 +609,23 @@ namespace DelfinForWindows
             backgroundProcess.SetApartmentState(ApartmentState.STA);
             backgroundProcess.Start(args);
             backgroundProcess.Join();
+        }
+
+        private void ProcessResult(CryptionResult result, MODE mode)
+        {
+            string modeString = mode == MODE.DECRYPT ? "Decryption" : "Encryption";
+            if (result.Success)
+            {
+                UpdateFeed($"{modeString} successful.");
+                ShowMessage($"{modeString} successful.", "Success");
+            }
+            else
+            {
+                UpdateFeed($"{modeString} failed. Reason: {result.ErrDescription}");
+                ShowMessage($"{modeString} failed. Reason: {result.ErrDescription}", $"{result.ErrMsg}");
+            }
+
+            InitializeStateAndButtons();
         }
 
         // threadsafe call to enter primary state, enabling/disabling certain buttons and setting flags
