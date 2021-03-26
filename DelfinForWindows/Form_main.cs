@@ -535,21 +535,7 @@ namespace DelfinForWindows
         // string imgName, string password
         private void Decrypt(object args)
         {
-            // set flags to incomplete states (so they will hold these values if this thread is aborted)
-            errMsg = "incomplete operation";
-            success = false;
-
-            // unpack args (failsafe, but this should never fail)
-            Tuple<string, string> input;
-            try
-            {
-                input = (Tuple<string, string>)args;
-            }
-            catch (InvalidCastException)
-            {
-                errMsg = "fatal! Improperly packed arguments";
-                return;
-            }
+            var input = (Tuple<string, string>)args;
             string imgName = input.Item1;
             string password = input.Item2;
 
@@ -563,21 +549,7 @@ namespace DelfinForWindows
         // string imgName, string fileName, string password
         private void Encrypt(object args)
         {
-            // set flags to incomplete states (so they will hold these values if this thread is aborted)
-            errMsg = "incomplete operation";
-            success = false;
-
-            // unpack args (failsafe, but this should never fail)
-            Tuple<string, string, string> input;
-            try
-            {
-                input = (Tuple<string, string, string>)args;
-            }
-            catch (InvalidCastException)
-            {
-                errMsg = "fatal! Improperly packed arguments";
-                return;
-            }
+            var input = (Tuple<string, string, string>)args;
             string imgName = input.Item1;
             string fileName = input.Item2;
             string password = input.Item3;

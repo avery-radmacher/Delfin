@@ -4,15 +4,14 @@ using System.IO;
 
 namespace IOHandler
 {
+    public delegate void ErrorHandler(string errMsg, string errDescription);
+    public delegate void LoadImageHandler(Bitmap bitmap);
+    public delegate void LoadFileHandler(byte[] filebuffer, long fileSize);
+    public delegate void SaveImageHandler();
+    public delegate void SaveFileHandler();
 
     public class IOHandler
     {
-        public delegate void ErrorHandler(string errMsg, string errDescription);
-        public delegate void LoadImageHandler(Bitmap bitmap);
-        public delegate void LoadFileHandler(byte[] filebuffer, long fileSize);
-        public delegate void SaveImageHandler();
-        public delegate void SaveFileHandler();
-
         public static void LoadImage(string imgName, LoadImageHandler onLoadImage, ErrorHandler onError)
         {
             FileStream reader;
