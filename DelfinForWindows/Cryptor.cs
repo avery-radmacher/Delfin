@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using static IOHandler.IOHandler;
 
 namespace DelfinForWindows
 {
@@ -33,7 +34,7 @@ namespace DelfinForWindows
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
             // load image or quit on failure
-            IOHandler.LoadImage(imgName, bitmap => img = bitmap, HandleError);
+            LoadImage(imgName, bitmap => img = bitmap, HandleError);
             if (quit) return;
 
             // main data-processing loop
@@ -140,7 +141,7 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            IOHandler.SaveFile(saveFilename, fileBuffer, () => ProcessResult(new() { Success = true }), HandleError);
+            SaveFile(saveFilename, fileBuffer, () => ProcessResult(new() { Success = true }), HandleError);
         }
 
         // string imgName, string fileName, string password
@@ -165,11 +166,11 @@ namespace DelfinForWindows
             byte[] fileBuffer = null;
 
             // load the zip file or quit nicely on failure
-            IOHandler.LoadFile(filename, (buffer, size) => { fileBuffer = buffer; fileSize = size; }, HandleError);
+            LoadFile(filename, (buffer, size) => { fileBuffer = buffer; fileSize = size; }, HandleError);
             if (quit) return;
 
             // load the image or quit nicely on failure
-            IOHandler.LoadImage(imgName, bitmap => img = bitmap, HandleError);
+            LoadImage(imgName, bitmap => img = bitmap, HandleError);
             if (quit) return;
 
             // initiailze header and related items
@@ -263,7 +264,7 @@ namespace DelfinForWindows
             }
 
             // prompt user to save file
-            IOHandler.SaveImage(saveFilename, img, () => ProcessResult(new() { Success = true }), HandleError);
+            SaveImage(saveFilename, img, () => ProcessResult(new() { Success = true }), HandleError);
         }
     }
 }

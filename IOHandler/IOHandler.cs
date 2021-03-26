@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.IO;
 
-namespace DelfinForWindows
+namespace IOHandler
 {
 
     public class IOHandler
