@@ -6,16 +6,13 @@ namespace IOHandler
 {
     public delegate void ErrorHandler(string errMsg, string errDescription);
 
-    internal static class IOHandlerDefaults
+    public interface IWithErrorHandler
     {
-        internal static void DefaultErrorHandler(string errMessage, string errDescription)
+        protected private static void DefaultErrorHandler(string errMessage, string errDescription)
         {
             throw new Exception($"Error: {errMessage}\n\t{errDescription}");
         }
-    }
 
-    public interface IWithErrorHandler
-    {
         public ErrorHandler HandleError { get; }
     }
 
@@ -37,7 +34,7 @@ namespace IOHandler
 
         public FileSystemBitmapLoader(ErrorHandler errorHandler)
         {
-            HandleError = errorHandler ?? IOHandlerDefaults.DefaultErrorHandler;
+            HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
         }
 
         public Bitmap Load()
