@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using IOHandler;
-using static IOHandler.IOHandler;
 
 namespace DelfinForWindows
 {
@@ -43,7 +42,6 @@ namespace DelfinForWindows
 
     public class Cryptor
     {
-        // string imgName, string password
         public static void Decrypt(string imgName, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
@@ -167,7 +165,6 @@ namespace DelfinForWindows
             ProcessResult(new() { Success = true });
         }
 
-        // string imgName, string fileName, string password
         public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
