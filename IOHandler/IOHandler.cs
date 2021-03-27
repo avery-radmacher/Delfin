@@ -209,12 +209,12 @@ namespace IOHandler
         public ErrorHandler HandleError { get; }
     }
 
-    public interface IBitmapLoader : IWithErrorHandler
+    public interface ILoader<T> : IWithErrorHandler
     {
-        public Bitmap Load();
+        public T Load();
     }
 
-    public class FileSystemBitmapLoader : IBitmapLoader
+    public class FileSystemBitmapLoader : ILoader<Bitmap>
     {
         public ErrorHandler HandleError { get; }
 
