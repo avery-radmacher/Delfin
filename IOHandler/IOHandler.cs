@@ -340,6 +340,57 @@ namespace IOHandler
             return fileBuffer;
         }
     }
+
+    public class FileSystemBitmapHandler : IHandler<Bitmap>
+    {
+        public ErrorHandler HandleError { get; }
+
+        string Filename { get; }
+
+        public FileSystemBitmapHandler(ErrorHandler errorHandler)
+        {
+            HandleError = errorHandler;
+        }
+
+        public void Handle(Bitmap item)
+        {
+            if (!Filename.EndsWith(".png"))
+            {
+                HandleError("Wrong file type", $"Expected {Filename} to be a .png file.");
+                return;
+            }
+
+            FileStream writer;
+            try
+            {
+                writer = new FileStream(Filename, FileMode.Create);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is NotSupportedException ||
+                ex is ArgumentNullException ||
+                ex is DirectoryNotFoundException ||
+                ex is PathTooLongException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
+                return;
+            }
+            catch (IOException)
+            {
+                HandleError("unexpected I/O error", "An I/O error occurred while using the file.");
+                return;
+            }
+            catch (System.Security.SecurityException)
+            {
+                HandleError("unauthorized access", $"You don't have permission to access the file:\r\n{Filename}");
+                return;
+            }
+
+            item.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
+            writer.Dispose();
+        }
+    }
 }
 
 // One interface to rule them all
