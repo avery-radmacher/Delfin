@@ -161,6 +161,114 @@ namespace DelfinForWindows
             SaveFile(saveFilename, fileBuffer, () => ProcessResult(new() { Success = true }), HandleError);
         }
 
+        public static void Decrypt(DecryptorIO io, string password, Action<CryptionResult> ProcessResult)
+        {
+            void HandleError(string err, string errDesc)
+            {
+                ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
+            long pixScan = 0, byteScan = -1;
+            int color;
+            byte[] pairBuffer = new byte[6];
+            int population = 0;
+            int datum;
+            Header header = new();
+            byte[] fileBuffer = null;
+            Bitmap img;
+            Cipher cipher = password.Equals("") ? null : new OldCipher(password);
+
+            img = io.GetImage.Load();
+            if (img is null) return;
+
+            // main data-processing loop
+            while (!header.IsComplete || byteScan < header.FileSize)
+            {
+                // read a pixel's worth of data from the image
+                color = img.GetPixel((int)(pixScan % img.Width), (int)(pixScan / img.Width)).ToArgb();
+                pairBuffer[population++] = (byte)(color >> 16 & 3);
+                pairBuffer[population++] = (byte)(color >> 8 & 3);
+                pairBuffer[population++] = (byte)(color & 3);
+                pixScan++;
+
+                // write a byte, if we have enough data in the buffer
+                if (population >= 4)
+                {
+                    // retrieve byte from buffer and shift values
+                    datum = (pairBuffer[0] << 6) | (pairBuffer[1] << 4) | (pairBuffer[2] << 2) | pairBuffer[3];
+                    pairBuffer[0] = pairBuffer[4];
+                    pairBuffer[1] = pairBuffer[5];
+                    population -= 4;
+
+                    // determine whether byte is part of header or part of file
+                    if (byteScan < 0)
+                    {
+                        // construct header
+                        if (cipher != null)
+                        {
+                            datum ^= cipher.GetByte();
+                        }
+                        header.AddByte((byte)datum);
+
+                        if (header.IsUnsupported)
+                        {
+                            HandleError("header could not be read or password is wrong", "header could not be read or password is wrong");
+                            return;
+                        }
+
+                        // if header construction is complete, verify it and allocate buffer
+                        if (header.IsComplete)
+                        {
+                            // ensure file fits per completed header
+                            if (img.Height * img.Width * 3 / 4 < header.FileSize + header.HeaderSize)
+                            {
+                                HandleError("file is corrupt or password is wrong", "file is corrupt or password is wrong");
+                                return;
+                            }
+                            else
+                            {
+                                // It seems that occasionally the FileSize can overflow (I believe on invalid password
+                                // that slyly goes unnoticed) and throw a rare exception here. Just quit if so.
+                                try
+                                {
+                                    fileBuffer = new byte[header.FileSize];
+                                }
+                                catch (OverflowException)
+                                {
+                                    HandleError("file is corrupt or password is wrong", "file is corrupt or password is wrong");
+                                    return;
+                                }
+
+                                byteScan = 0; // lets loop know we are no longer reading the header
+                            }
+
+                            // for HV1, replace OldCipher with Cipher if non-null
+                            if (header.HeaderVersion == 1)
+                            {
+                                cipher = cipher == null ? null : new Cipher(password);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // add datum to buffer
+                        fileBuffer[byteScan++] = (byte)datum;
+                    }
+                }
+            }
+
+            // Decrypt file using cipher, if there was a password
+            if (cipher != null)
+            {
+                for (int i = 0; i < fileBuffer.Length; i++)
+                {
+                    fileBuffer[i] ^= cipher.GetByte();
+                }
+            }
+
+            io.SaveFile.Handle(fileBuffer);
+        }
+
         // string imgName, string fileName, string password
         public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
