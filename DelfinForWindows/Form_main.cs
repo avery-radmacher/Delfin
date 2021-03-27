@@ -1,7 +1,4 @@
-﻿// Author Avery Radmacher 201906161743
-// Project Delfin for Windows
-
-using System;
+﻿using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading;
