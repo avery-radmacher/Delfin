@@ -462,7 +462,7 @@ namespace DelfinForWindows
             //    UpdateFeed("The decryption was cancelled.");
             //}
 
-            //InitializeStateAndButtons();
+            InitializeStateAndButtons();
         }
 
         private void Button_Settings_Click(object sender, EventArgs e)
