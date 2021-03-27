@@ -23,8 +23,6 @@ namespace DelfinForWindows
         // flags
         MODE mode;
         bool hasImage, hasZip;
-        string errMsg;
-        bool success;
 
         Thread midgroundProcess; // used to manage encryption and decryption
         Thread backgroundProcess; // used to perform encryption and decryption
