@@ -214,6 +214,11 @@ namespace IOHandler
         public T Load();
     }
 
+    public interface IHandler<T> : IWithErrorHandler
+    {
+        public void Handle(T item);
+    }
+
     public class FileSystemBitmapLoader : ILoader<Bitmap>
     {
         public ErrorHandler HandleError { get; }
