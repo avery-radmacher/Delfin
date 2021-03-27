@@ -279,6 +279,67 @@ namespace IOHandler
             return img;
         }
     }
+
+    public class FileSystemByteArrayLoader : ILoader<byte[]>
+    {
+        public ErrorHandler HandleError { get; }
+
+        public string Filename { get; set; }
+
+        public string FileExtension { get; }
+
+        public FileSystemByteArrayLoader(ErrorHandler errorHandler, string fileExtension)
+        {
+            HandleError = errorHandler;
+            FileExtension = fileExtension;
+        }
+
+        public byte[] Load()
+        {
+            if(!Filename.EndsWith(FileExtension))
+            {
+                HandleError("Wrong file type", $"Expected {Filename} to end with {FileExtension}");
+                return null;
+            }
+
+            long fileSize;
+            byte[] fileBuffer;
+            try
+            {
+                fileSize = new FileInfo(Filename).Length;
+                fileBuffer = File.ReadAllBytes(Filename);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is ArgumentNullException ||
+                ex is PathTooLongException ||
+                ex is DirectoryNotFoundException ||
+                ex is NotSupportedException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
+                return null;
+            }
+            catch (FileNotFoundException)
+            {
+                HandleError("file not found", $"The file\r\n{Filename}\r\nwas not found.");
+                return null;
+            }
+            catch (IOException)
+            {
+                HandleError("unexpected I/O error", "An I/O error occurred while opening the file.");
+                return null;
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
+            {
+                HandleError("unauthorized access", $"You don't have permission to access the file:\r\n{Filename}");
+                return null;
+            }
+
+            if (fileBuffer.LongLength != fileSize) throw new ApplicationException("Buffers can be other sizes, apparently.");
+            return fileBuffer;
+        }
+    }
 }
 
 // One interface to rule them all
