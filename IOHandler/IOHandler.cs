@@ -296,7 +296,7 @@ namespace IOHandler
 
         public byte[] Load()
         {
-            if(!Filename.EndsWith(FileExtension))
+            if (!Filename.EndsWith(FileExtension))
             {
                 HandleError("Wrong file type", $"Expected {Filename} to end with {FileExtension}");
                 return null;
@@ -388,6 +388,62 @@ namespace IOHandler
             }
 
             item.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
+            writer.Dispose();
+        }
+    }
+
+    public class FileSystemByteArrayHandler : IHandler<byte[]>
+    {
+        public ErrorHandler HandleError { get; }
+
+        public string Filename { get; set; }
+
+        public string FileExtension { get; }
+
+        public FileSystemByteArrayHandler(ErrorHandler errorHandler, string fileExtension)
+        {
+            HandleError = errorHandler;
+            FileExtension = fileExtension;
+        }
+
+        public void Handle(byte[] item)
+        {
+            if (!Filename.EndsWith(FileExtension))
+            {
+                HandleError("Wrong file type", $"Expected {Filename} to end with {FileExtension}");
+                return;
+            }
+
+            BinaryWriter writer;
+            try
+            {
+                writer = new BinaryWriter(File.Open(Filename, FileMode.Create));
+                writer.Write(item);
+            }
+            catch (Exception ex) when
+                (ex is ArgumentException ||
+                ex is ArgumentNullException ||
+                ex is PathTooLongException ||
+                ex is DirectoryNotFoundException ||
+                ex is NotSupportedException)
+            {
+                // path is null, empty, or invalid due to length, drive, or characters
+                HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
+                return;
+            }
+            catch (IOException)
+            {
+                HandleError("unexpected I/O error", "An I/O error occurred while using the file.");
+                return;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                HandleError($"You don't have permission to access the file:\r\n{Filename}", "unauthorized access");
+                return;
+            }
+
+            writer.Flush();
+            writer.Close();
             writer.Dispose();
         }
     }
