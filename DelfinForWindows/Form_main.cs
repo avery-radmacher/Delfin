@@ -574,7 +574,6 @@ namespace DelfinForWindows
             backgroundProcess = new Thread(Encrypt);
             backgroundProcess.SetApartmentState(ApartmentState.STA);
             backgroundProcess.Start(args);
-            backgroundProcess.Join();
         }
 
         private void ProcessResult(CryptionResult result, MODE mode)
