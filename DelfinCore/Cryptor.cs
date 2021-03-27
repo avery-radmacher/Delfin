@@ -14,18 +14,18 @@ namespace DelfinForWindows
 
     public class DecryptorIO
     {
-        internal ILoader<Bitmap> GetImage { get; }
+        internal ILoader<Bitmap> ImageLoader { get; }
 
-        internal IHandler<byte[]> SaveFile { get; }
+        internal IHandler<byte[]> FileSaver { get; }
     }
 
     public class EncryptorIO
     {
-        internal ILoader<Bitmap> GetImage { get; }
+        internal ILoader<Bitmap> ImageLoader { get; }
 
-        internal ILoader<byte[]> GetFile { get; }
+        internal ILoader<byte[]> FileLoader { get; }
 
-        internal IHandler<Bitmap> SaveImage { get; }
+        internal IHandler<Bitmap> ImageSaver { get; }
     }
 
     public class Cryptor
@@ -178,7 +178,7 @@ namespace DelfinForWindows
             Bitmap img;
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
-            img = io.GetImage.Load();
+            img = io.ImageLoader.Load();
             if (img is null) return;
 
             // main data-processing loop
@@ -266,7 +266,7 @@ namespace DelfinForWindows
                 }
             }
 
-            io.SaveFile.Handle(fileBuffer);
+            io.FileSaver.Handle(fileBuffer);
         }
 
         // string imgName, string fileName, string password
