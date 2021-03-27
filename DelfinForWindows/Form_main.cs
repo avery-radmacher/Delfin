@@ -427,13 +427,13 @@ namespace DelfinForWindows
             {
                 midgroundProcess = new Thread(EncryptWrapper);
                 midgroundProcess.SetApartmentState(ApartmentState.STA);
-                midgroundProcess.Start(new Tuple<string, string, string>(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
+                midgroundProcess.Start((openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
             }
             else if (mode == MODE.DECRYPT)
             {
                 midgroundProcess = new Thread(DecryptWrapper);
                 midgroundProcess.SetApartmentState(ApartmentState.STA);
-                midgroundProcess.Start(new Tuple<string, string>(openFileDialog_image.FileName, textBox_password.Text));
+                midgroundProcess.Start((openFileDialog_image.FileName, textBox_password.Text));
             }
         }
 
@@ -527,12 +527,9 @@ namespace DelfinForWindows
             MessageBox.Show(text, caption);
         }
 
-        // string imgName, string password
         private void Decrypt(object args)
         {
-            var input = (Tuple<string, string>)args;
-            string imgName = input.Item1;
-            string password = input.Item2;
+            var (imgName, password) = ((string, string))args;
 
             string saveFilename = saveFileDialog_zip.ShowDialog() == DialogResult.OK
                 ? saveFileDialog_zip.FileName
@@ -541,13 +538,9 @@ namespace DelfinForWindows
             Cryptor.Decrypt(imgName, password, saveFilename, (result) => ProcessResult(result, MODE.DECRYPT));
         }
 
-        // string imgName, string fileName, string password
         private void Encrypt(object args)
         {
-            var input = (Tuple<string, string, string>)args;
-            string imgName = input.Item1;
-            string fileName = input.Item2;
-            string password = input.Item3;
+            var (imgName, fileName, password) = ((string, string, string))args;
 
             string saveFilename = saveFileDialog_image.ShowDialog() == DialogResult.OK
                 ? saveFileDialog_image.FileName
