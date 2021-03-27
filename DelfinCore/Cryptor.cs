@@ -170,31 +170,43 @@ namespace DelfinForWindows
         // string imgName, string fileName, string password
         public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
         {
-            bool quit = false;
             void HandleError(string err, string errDesc)
             {
-                quit = true;
                 ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
             }
 
-            long pixScan = 0, byteScan, fileSize = 0;
+            var imageLoader = new FileSystemBitmapLoader(HandleError) { Filename = imgName };
+            var fileLoader = new FileSystemByteArrayLoader(HandleError, ".zip") { Filename = filename };
+            var imageSaver = new FileSystemBitmapHandler(HandleError) { Filename = saveFilename };
+            var encryptorIO = new EncryptorIO(imageLoader, fileLoader, imageSaver);
+
+            Encrypt(encryptorIO, password, ProcessResult);
+        }
+
+        public static void Encrypt(EncryptorIO io, string password, Action<CryptionResult> ProcessResult)
+        {
+            void HandleError(string err, string errDesc)
+            {
+                ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
+            long pixScan = 0, byteScan, fileSize;
             int pixX, pixY;
             int color, A, R, G, B;
             byte[] pairBuffer = new byte[6];
             int population = 0;
             int datum;
-            Bitmap img = null;
+            Bitmap img;
             Header header = new();
             byte[] headerBuffer;
-            byte[] fileBuffer = null;
+            byte[] fileBuffer;
 
-            // load the zip file or quit nicely on failure
-            LoadFile(filename, (buffer, size) => { fileBuffer = buffer; fileSize = size; }, HandleError);
-            if (quit) return;
+            fileBuffer = io.FileLoader.Load();
+            if (fileBuffer is null) return;
+            fileSize = fileBuffer.LongLength;
 
-            // load the image or quit nicely on failure
-            LoadImage(imgName, bitmap => img = bitmap, HandleError);
-            if (quit) return;
+            img = io.ImageLoader.Load();
+            if (img is null) return;
 
             // initiailze header and related items
             header.FileSize = (int)fileSize;
@@ -204,12 +216,7 @@ namespace DelfinForWindows
             // verify image is large enough to hold the file or quit
             if (img.Height * img.Width * 3 / 4 < fileSize + header.HeaderSize)
             {
-                CryptionResult result = new()
-                {
-                    Success = false,
-                    ErrMsg = "image too small",
-                };
-                ProcessResult(result);
+                HandleError("image too small", "The image is too small to hold the file.");
                 return;
             }
 
@@ -286,8 +293,8 @@ namespace DelfinForWindows
                 population -= 3;
             }
 
-            // prompt user to save file
-            SaveImage(saveFilename, img, () => ProcessResult(new() { Success = true }), HandleError);
+            io.ImageSaver.Handle(img);
+            ProcessResult(new() { Success = true });
         }
     }
 }
