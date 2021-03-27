@@ -204,10 +204,13 @@ namespace IOHandler
         }
     }
 
-    public interface IBitmapLoader
+    public interface IWithErrorHandler
     {
         public ErrorHandler HandleError { get; }
+    }
 
+    public interface IBitmapLoader : IWithErrorHandler
+    {
         public Bitmap Load();
     }
 
@@ -272,3 +275,10 @@ namespace IOHandler
         }
     }
 }
+
+// One interface to rule them all
+//   contains errorhandler and default
+// Four interfaces derived for each kind of asset and operation
+//   contains typed Load method
+// Implementations
+//   ...
