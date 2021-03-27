@@ -32,7 +32,7 @@ namespace IOHandler
 
         public string Filename { get; set; }
 
-        public FileSystemBitmapLoader(ErrorHandler errorHandler)
+        public FileSystemBitmapLoader(ErrorHandler errorHandler = null)
         {
             HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
         }
@@ -95,9 +95,9 @@ namespace IOHandler
 
         public string FileExtension { get; }
 
-        public FileSystemByteArrayLoader(ErrorHandler errorHandler, string fileExtension)
+        public FileSystemByteArrayLoader(string fileExtension, ErrorHandler errorHandler = null)
         {
-            HandleError = errorHandler;
+            HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
             FileExtension = fileExtension;
         }
 
@@ -154,9 +154,9 @@ namespace IOHandler
 
         public string Filename { get; set; }
 
-        public FileSystemBitmapHandler(ErrorHandler errorHandler)
+        public FileSystemBitmapHandler(ErrorHandler errorHandler = null)
         {
-            HandleError = errorHandler;
+            HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
         }
 
         public void Handle(Bitmap item)
@@ -207,9 +207,9 @@ namespace IOHandler
 
         public string FileExtension { get; }
 
-        public FileSystemByteArrayHandler(ErrorHandler errorHandler, string fileExtension)
+        public FileSystemByteArrayHandler(string fileExtension, ErrorHandler errorHandler = null)
         {
-            HandleError = errorHandler;
+            HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
             FileExtension = fileExtension;
         }
 

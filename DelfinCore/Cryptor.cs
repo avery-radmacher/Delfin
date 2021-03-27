@@ -50,7 +50,7 @@ namespace DelfinForWindows
             }
 
             var imageLoader = new FileSystemBitmapLoader(HandleError) { Filename = imgName };
-            var fileSaver = new FileSystemByteArrayHandler(HandleError, ".zip") { Filename = saveFilename };
+            var fileSaver = new FileSystemByteArrayHandler(".zip", HandleError) { Filename = saveFilename };
             var decryptorIO = new DecryptorIO(imageLoader, fileSaver);
 
             Decrypt(decryptorIO, password, ProcessResult);
@@ -173,7 +173,7 @@ namespace DelfinForWindows
             }
 
             var imageLoader = new FileSystemBitmapLoader(HandleError) { Filename = imgName };
-            var fileLoader = new FileSystemByteArrayLoader(HandleError, ".zip") { Filename = filename };
+            var fileLoader = new FileSystemByteArrayLoader(".zip", HandleError) { Filename = filename };
             var imageSaver = new FileSystemBitmapHandler(HandleError) { Filename = saveFilename };
             var encryptorIO = new EncryptorIO(imageLoader, fileLoader, imageSaver);
 
