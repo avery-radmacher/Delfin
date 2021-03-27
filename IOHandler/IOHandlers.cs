@@ -227,8 +227,6 @@ namespace IOHandler
                 return;
             }
 
-            writer.Flush();
-            writer.Close();
             writer.Dispose();
         }
     }
