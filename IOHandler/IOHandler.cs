@@ -345,7 +345,7 @@ namespace IOHandler
     {
         public ErrorHandler HandleError { get; }
 
-        string Filename { get; }
+        public string Filename { get; set; }
 
         public FileSystemBitmapHandler(ErrorHandler errorHandler)
         {
