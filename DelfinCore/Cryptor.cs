@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using IOHandler;
 using static IOHandler.IOHandler;
 
 namespace DelfinForWindows
@@ -9,6 +10,13 @@ namespace DelfinForWindows
         public bool Success { get; internal set; }
         public string ErrMsg { get; internal set; }
         public string ErrDescription { get; internal set; }
+    }
+
+    public class DecryptorIO
+    {
+        internal ILoader<Bitmap> GetImage { get; }
+
+        internal IHandler<byte[]> SaveFile { get; }
     }
 
     public class Cryptor
