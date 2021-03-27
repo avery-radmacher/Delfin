@@ -19,6 +19,15 @@ namespace DelfinForWindows
         internal IHandler<byte[]> SaveFile { get; }
     }
 
+    public class EncryptorIO
+    {
+        internal ILoader<Bitmap> GetImage { get; }
+
+        internal ILoader<byte[]> GetFile { get; }
+
+        internal IHandler<Bitmap> SaveImage { get; }
+    }
+
     public class Cryptor
     {
         // string imgName, string password
