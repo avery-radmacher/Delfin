@@ -43,7 +43,7 @@ namespace DelfinForWindows
 
     public class Cryptor
     {
-        public static void Decrypt(string imgName, string password, string saveFilename, CancellationToken token, Action<CryptionResult> ProcessResult)
+        public static void Decrypt(string imgName, string password, string saveFilename, Action<CryptionResult> ProcessResult, CancellationToken token)
         {
             void HandleError(string err, string errDesc)
             {
@@ -54,10 +54,10 @@ namespace DelfinForWindows
             var fileSaver = new FileSystemByteArrayHandler(".zip", HandleError) { Filename = saveFilename };
             var decryptorIO = new DecryptorIO(imageLoader, fileSaver);
 
-            Decrypt(decryptorIO, password, token, ProcessResult);
+            Decrypt(decryptorIO, password, ProcessResult, token);
         }
 
-        public static void Decrypt(DecryptorIO io, string password, CancellationToken token, Action<CryptionResult> ProcessResult)
+        public static void Decrypt(DecryptorIO io, string password, Action<CryptionResult> ProcessResult, CancellationToken token)
         {
             void HandleError(string err, string errDesc)
             {
@@ -184,7 +184,7 @@ namespace DelfinForWindows
             ProcessResult(new() { Success = true });
         }
 
-        public static void Encrypt(string imgName, string filename, string password, string saveFilename, CancellationToken token, Action<CryptionResult> ProcessResult)
+        public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult, CancellationToken token)
         {
             void HandleError(string err, string errDesc)
             {
@@ -196,10 +196,10 @@ namespace DelfinForWindows
             var imageSaver = new FileSystemBitmapHandler(HandleError) { Filename = saveFilename };
             var encryptorIO = new EncryptorIO(imageLoader, fileLoader, imageSaver);
 
-            Encrypt(encryptorIO, password, token, ProcessResult);
+            Encrypt(encryptorIO, password, ProcessResult, token);
         }
 
-        public static void Encrypt(EncryptorIO io, string password, CancellationToken token, Action<CryptionResult> ProcessResult)
+        public static void Encrypt(EncryptorIO io, string password, Action<CryptionResult> ProcessResult, CancellationToken token)
         {
             void HandleError(string err, string errDesc)
             {

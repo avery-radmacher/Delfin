@@ -531,7 +531,7 @@ namespace DelfinForWindows
                 return;
             }
 
-            Cryptor.Decrypt(imgName, password, saveFilename, token, (result) => ProcessResult(result, MODE.DECRYPT));
+            Cryptor.Decrypt(imgName, password, saveFilename, (result) => ProcessResult(result, MODE.DECRYPT), token);
         }
 
         private void Encrypt(string imgName, string filename, string password, CancellationToken token)
@@ -549,7 +549,7 @@ namespace DelfinForWindows
                 return;
             }
 
-            Cryptor.Encrypt(imgName, filename, password, saveFilename, token, (result) => ProcessResult(result, MODE.ENCRYPT));
+            Cryptor.Encrypt(imgName, filename, password, saveFilename, (result) => ProcessResult(result, MODE.ENCRYPT), token);
         }
 
         private void ProcessResult(bool success, string errMsg, string errDescription, MODE mode)
