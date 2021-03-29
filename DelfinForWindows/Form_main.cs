@@ -22,6 +22,7 @@ namespace DelfinForWindows
         bool hasImage, hasZip;
 
         Thread cryptionThread; // used to manage encryption and decryption
+        CancellationTokenSource cancellationTokenSource;
 
         private Button button_encrypt;
         private Button button_decrypt;
@@ -421,16 +422,18 @@ namespace DelfinForWindows
             button_selectImage.Enabled = false;
             button_selectZip.Enabled = false;
             button_execute.Enabled = false;
+
+            cancellationTokenSource = new();
             
             if (mode == MODE.ENCRYPT)
             {
-                cryptionThread = new Thread(() => Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
+                cryptionThread = new Thread(() => Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text, cancellationTokenSource.Token));
                 cryptionThread.SetApartmentState(ApartmentState.STA);
                 cryptionThread.Start();
             }
             else if (mode == MODE.DECRYPT)
             {
-                cryptionThread = new Thread(() => Decrypt(openFileDialog_image.FileName, textBox_password.Text));
+                cryptionThread = new Thread(() => Decrypt(openFileDialog_image.FileName, textBox_password.Text, cancellationTokenSource.Token));
                 cryptionThread.SetApartmentState(ApartmentState.STA);
                 cryptionThread.Start();
             }
@@ -439,22 +442,9 @@ namespace DelfinForWindows
         // resets the form and kills any background threads
         private void Button_cancel_Click(object sender, EventArgs e)
         {
-            // kill the background process if there is one
-            if(cryptionThread != null && cryptionThread.IsAlive)
-            {
-                ShowMessage("Cancellation is temporarily unavailable. Please wait for a future release.", "Cannot cancel");
-                // backgroundProcess.Abort();
-            }
-
-            //// inform user
-            //if (mode == MODE.ENCRYPT)
-            //{
-            //    UpdateFeed("The encryption was cancelled.");
-            //}
-            //else if (mode == MODE.DECRYPT)
-            //{
-            //    UpdateFeed("The decryption was cancelled.");
-            //}
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
 
             InitializeStateAndButtons();
         }
@@ -526,7 +516,7 @@ namespace DelfinForWindows
             MessageBox.Show(text, caption);
         }
 
-        private void Decrypt(string imgName, string password)
+        private void Decrypt(string imgName, string password, CancellationToken token)
         {
             UpdateFeed($"Decrypting {openFileDialog_image.FileName.ShortFileName()}...");
 
@@ -534,10 +524,10 @@ namespace DelfinForWindows
                 ? saveFileDialog_zip.FileName
                 : "";
 
-            Cryptor.Decrypt(imgName, password, saveFilename, (result) => ProcessResult(result, MODE.DECRYPT));
+            Cryptor.Decrypt(imgName, password, saveFilename, token, (result) => ProcessResult(result, MODE.DECRYPT));
         }
 
-        private void Encrypt(string imgName, string filename, string password)
+        private void Encrypt(string imgName, string filename, string password, CancellationToken token)
         {
             UpdateFeed($"Encrypting {openFileDialog_zip.FileName.ShortFileName()} into {openFileDialog_image.FileName.ShortFileName()}...");
 
@@ -545,7 +535,7 @@ namespace DelfinForWindows
                 ? saveFileDialog_image.FileName
                 : "";
 
-            Cryptor.Encrypt(imgName, filename, password, saveFilename, (result) => ProcessResult(result, MODE.ENCRYPT));
+            Cryptor.Encrypt(imgName, filename, password, saveFilename, token, (result) => ProcessResult(result, MODE.ENCRYPT));
         }
 
         private void ProcessResult(CryptionResult result, MODE mode)
