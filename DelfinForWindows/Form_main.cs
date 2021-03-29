@@ -443,8 +443,6 @@ namespace DelfinForWindows
         private void Button_cancel_Click(object sender, EventArgs e)
         {
             cancellationTokenSource?.Cancel();
-            cancellationTokenSource?.Dispose();
-            cancellationTokenSource = null;
 
             InitializeStateAndButtons();
         }
