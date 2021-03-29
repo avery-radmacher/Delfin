@@ -590,6 +590,8 @@ namespace DelfinForWindows
             button_cancel.Enabled = false;
             SetInfoText(mainWelcomeInfo);
             cryptionThread = null;
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
         }
     }
 
