@@ -538,22 +538,24 @@ namespace DelfinForWindows
             Cryptor.Encrypt(imgName, filename, password, saveFilename, token, (result) => ProcessResult(result, MODE.ENCRYPT));
         }
 
-        private void ProcessResult(CryptionResult result, MODE mode)
+        private void ProcessResult(bool success, string errMsg, string errDescription, MODE mode)
         {
             string modeString = mode == MODE.DECRYPT ? "Decryption" : "Encryption";
-            if (result.Success)
+            if (success)
             {
                 UpdateFeed($"{modeString} successful.");
                 ShowMessage($"{modeString} successful.", "Success");
             }
             else
             {
-                UpdateFeed($"{modeString} failed. Reason: {result.ErrDescription}");
-                ShowMessage($"{modeString} failed. Reason: {result.ErrDescription}", $"{result.ErrMsg}");
+                UpdateFeed($"{modeString} failed. Reason: {errDescription}");
+                ShowMessage($"{modeString} failed. Reason: {errDescription}", $"{errMsg}");
             }
 
             InitializeStateAndButtons();
         }
+
+        private void ProcessResult(CryptionResult result, MODE mode) => ProcessResult(result.Success, result.ErrMsg, result.ErrDescription, mode);
 
         // threadsafe call to enter primary state, enabling/disabling certain buttons and setting flags
         private void InitializeStateAndButtons()
