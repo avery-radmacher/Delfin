@@ -520,9 +520,16 @@ namespace DelfinForWindows
         {
             UpdateFeed($"Decrypting {openFileDialog_image.FileName.ShortFileName()}...");
 
-            string saveFilename = saveFileDialog_zip.ShowDialog() == DialogResult.OK
-                ? saveFileDialog_zip.FileName
-                : "";
+            string saveFilename;
+            if (saveFileDialog_zip.ShowDialog() == DialogResult.OK)
+            {
+                saveFilename = saveFileDialog_zip.FileName;
+            }
+            else
+            {
+                ProcessResult(false, "Cancelled operation", "Saving the result was cancelled.", MODE.DECRYPT);
+                return;
+            }
 
             Cryptor.Decrypt(imgName, password, saveFilename, token, (result) => ProcessResult(result, MODE.DECRYPT));
         }
@@ -531,9 +538,16 @@ namespace DelfinForWindows
         {
             UpdateFeed($"Encrypting {openFileDialog_zip.FileName.ShortFileName()} into {openFileDialog_image.FileName.ShortFileName()}...");
 
-            string saveFilename = saveFileDialog_image.ShowDialog() == DialogResult.OK
-                ? saveFileDialog_image.FileName
-                : "";
+            string saveFilename;
+            if (saveFileDialog_image.ShowDialog() == DialogResult.OK)
+            {
+                saveFilename = saveFileDialog_image.FileName;
+            }
+            else
+            {
+                ProcessResult(false, "Cancelled operation", "Saving the result was cancelled.", MODE.ENCRYPT);
+                return;
+            }
 
             Cryptor.Encrypt(imgName, filename, password, saveFilename, token, (result) => ProcessResult(result, MODE.ENCRYPT));
         }
