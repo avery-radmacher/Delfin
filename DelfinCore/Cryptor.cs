@@ -321,6 +321,7 @@ namespace DelfinForWindows
                 {
                     pairBuffer[i] = pairBuffer[i + 3];
                 }
+
                 population -= 3;
             }
 
