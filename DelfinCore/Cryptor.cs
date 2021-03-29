@@ -176,7 +176,11 @@ namespace DelfinForWindows
             }
 
             if (QuitIfCancellationRequested()) return;
-            io.FileSaver.Handle(fileBuffer);
+            if (!io.FileSaver.Handle(fileBuffer))
+            {
+                HandleError("Error saving file", "The file could not be saved.");
+                return;
+            }
             ProcessResult(new() { Success = true });
         }
 
@@ -317,12 +321,15 @@ namespace DelfinForWindows
                 {
                     pairBuffer[i] = pairBuffer[i + 3];
                 }
-
                 population -= 3;
             }
 
             if (QuitIfCancellationRequested()) return;
-            io.ImageSaver.Handle(img);
+            if (!io.ImageSaver.Handle(img))
+            {
+                HandleError("Error saving file", "The file could not be saved.");
+                return;
+            }
             ProcessResult(new() { Success = true });
         }
     }
