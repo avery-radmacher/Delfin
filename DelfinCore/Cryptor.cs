@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using IOHandler;
 
 namespace DelfinForWindows
@@ -42,7 +43,7 @@ namespace DelfinForWindows
 
     public class Cryptor
     {
-        public static void Decrypt(string imgName, string password, string saveFilename, Action<CryptionResult> ProcessResult)
+        public static void Decrypt(string imgName, string password, string saveFilename, CancellationToken token, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
             {
@@ -53,14 +54,24 @@ namespace DelfinForWindows
             var fileSaver = new FileSystemByteArrayHandler(".zip", HandleError) { Filename = saveFilename };
             var decryptorIO = new DecryptorIO(imageLoader, fileSaver);
 
-            Decrypt(decryptorIO, password, ProcessResult);
+            Decrypt(decryptorIO, password, token, ProcessResult);
         }
 
-        public static void Decrypt(DecryptorIO io, string password, Action<CryptionResult> ProcessResult)
+        public static void Decrypt(DecryptorIO io, string password, CancellationToken token, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
             {
                 ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
+            bool QuitIfCancellationRequested()
+            {
+                if (token.IsCancellationRequested)
+                {
+                    HandleError("Cancellation", "The decryption was cancelled.");
+                    return true;
+                }
+                return false;
             }
 
             long pixScan = 0, byteScan = -1;
@@ -73,6 +84,7 @@ namespace DelfinForWindows
             Bitmap img;
             Cipher cipher = password.Equals("") ? null : new OldCipher(password);
 
+            if (QuitIfCancellationRequested()) return;
             img = io.ImageLoader.Load();
             if (img is null) return;
 
@@ -89,6 +101,7 @@ namespace DelfinForWindows
                 // write a byte, if we have enough data in the buffer
                 if (population >= 4)
                 {
+                    if (QuitIfCancellationRequested()) return;
                     // retrieve byte from buffer and shift values
                     datum = (pairBuffer[0] << 6) | (pairBuffer[1] << 4) | (pairBuffer[2] << 2) | pairBuffer[3];
                     pairBuffer[0] = pairBuffer[4];
@@ -157,15 +170,17 @@ namespace DelfinForWindows
             {
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
+                    if (QuitIfCancellationRequested()) return;
                     fileBuffer[i] ^= cipher.GetByte();
                 }
             }
 
+            if (QuitIfCancellationRequested()) return;
             io.FileSaver.Handle(fileBuffer);
             ProcessResult(new() { Success = true });
         }
 
-        public static void Encrypt(string imgName, string filename, string password, string saveFilename, Action<CryptionResult> ProcessResult)
+        public static void Encrypt(string imgName, string filename, string password, string saveFilename, CancellationToken token, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
             {
@@ -177,14 +192,24 @@ namespace DelfinForWindows
             var imageSaver = new FileSystemBitmapHandler(HandleError) { Filename = saveFilename };
             var encryptorIO = new EncryptorIO(imageLoader, fileLoader, imageSaver);
 
-            Encrypt(encryptorIO, password, ProcessResult);
+            Encrypt(encryptorIO, password, token, ProcessResult);
         }
 
-        public static void Encrypt(EncryptorIO io, string password, Action<CryptionResult> ProcessResult)
+        public static void Encrypt(EncryptorIO io, string password, CancellationToken token, Action<CryptionResult> ProcessResult)
         {
             void HandleError(string err, string errDesc)
             {
                 ProcessResult(new CryptionResult() { Success = false, ErrMsg = err, ErrDescription = errDesc });
+            }
+
+            bool QuitIfCancellationRequested()
+            {
+                if (token.IsCancellationRequested)
+                {
+                    HandleError("Cancellation", "The decryption was cancelled.");
+                    return true;
+                }
+                return false;
             }
 
             long pixScan = 0, byteScan, fileSize;
@@ -198,10 +223,12 @@ namespace DelfinForWindows
             byte[] headerBuffer;
             byte[] fileBuffer;
 
+            if (QuitIfCancellationRequested()) return;
             fileBuffer = io.FileLoader.Load();
             if (fileBuffer is null) return;
             fileSize = fileBuffer.LongLength;
 
+            if (QuitIfCancellationRequested()) return;
             img = io.ImageLoader.Load();
             if (img is null) return;
 
@@ -223,11 +250,13 @@ namespace DelfinForWindows
                 Cipher cipher = new OldCipher(password);
                 for (int i = 0; i < headerBuffer.Length; i++)
                 {
+                    if (QuitIfCancellationRequested()) return;
                     headerBuffer[i] ^= cipher.GetByte();
                 }
                 cipher = new Cipher(password); // HV1 encrypts the header with OldCipher and the file with Cipher (this ensures backwards compatibility)
                 for (int i = 0; i < fileBuffer.Length; i++)
                 {
+                    if (QuitIfCancellationRequested()) return;
                     fileBuffer[i] ^= cipher.GetByte();
                 }
             }
@@ -238,6 +267,8 @@ namespace DelfinForWindows
                 // make sure we have data to write; if not, get some more
                 if (population < 3)
                 {
+                    if (QuitIfCancellationRequested()) return;
+
                     // if there's more data to get, get it; if not, create fake data
                     if (byteScan < fileSize)
                     {
@@ -290,6 +321,7 @@ namespace DelfinForWindows
                 population -= 3;
             }
 
+            if (QuitIfCancellationRequested()) return;
             io.ImageSaver.Handle(img);
             ProcessResult(new() { Success = true });
         }
