@@ -137,12 +137,12 @@ namespace IOHandler
             HandleError = errorHandler ?? IWithErrorHandler.DefaultErrorHandler;
         }
 
-        public void Handle(Bitmap item)
+        public bool Handle(Bitmap item)
         {
             if (!Filename.EndsWith(".png"))
             {
                 HandleError("Wrong file type", $"Expected {Filename} to be a .png file.");
-                return;
+                return false;
             }
 
             FileStream writer;
@@ -159,21 +159,22 @@ namespace IOHandler
             {
                 // path is null, empty, or invalid due to length, drive, or characters
                 HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
-                return;
+                return false;
             }
             catch (IOException)
             {
                 HandleError("unexpected I/O error", "An I/O error occurred while using the file.");
-                return;
+                return false;
             }
             catch (System.Security.SecurityException)
             {
                 HandleError("unauthorized access", $"You don't have permission to access the file:\r\n{Filename}");
-                return;
+                return false;
             }
 
             item.Save(writer, System.Drawing.Imaging.ImageFormat.Png);
             writer.Dispose();
+            return true;
         }
     }
 
@@ -191,12 +192,12 @@ namespace IOHandler
             FileExtension = fileExtension;
         }
 
-        public void Handle(byte[] item)
+        public bool Handle(byte[] item)
         {
             if (!Filename.EndsWith(FileExtension))
             {
                 HandleError("Wrong file type", $"Expected {Filename} to end with {FileExtension}");
-                return;
+                return false;
             }
 
             BinaryWriter writer;
@@ -214,20 +215,21 @@ namespace IOHandler
             {
                 // path is null, empty, or invalid due to length, drive, or characters
                 HandleError("invalid path name", $"The path\r\n{Filename}\r\nis not a valid path. Please specify a valid path.");
-                return;
+                return false;
             }
             catch (IOException)
             {
                 HandleError("unexpected I/O error", "An I/O error occurred while using the file.");
-                return;
+                return false;
             }
             catch (UnauthorizedAccessException)
             {
                 HandleError($"You don't have permission to access the file:\r\n{Filename}", "unauthorized access");
-                return;
+                return false;
             }
 
             writer.Dispose();
+            return true;
         }
     }
 }
