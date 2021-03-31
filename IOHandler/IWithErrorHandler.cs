@@ -21,6 +21,6 @@ namespace IOHandler
 
     public interface IHandler<T> : IWithErrorHandler
     {
-        public void Handle(T item);
+        public bool Handle(T item);
     }
 }

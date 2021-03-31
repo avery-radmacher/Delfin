@@ -21,8 +21,8 @@ namespace DelfinForWindows
         MODE mode;
         bool hasImage, hasZip;
 
-        Thread midgroundProcess; // used to manage encryption and decryption
-        Thread backgroundProcess; // used to perform encryption and decryption
+        Thread cryptionThread; // used to manage encryption and decryption
+        CancellationTokenSource cancellationTokenSource;
 
         private Button button_encrypt;
         private Button button_decrypt;
@@ -319,7 +319,7 @@ namespace DelfinForWindows
             {
                 SetInfoText(mainWelcomeInfo);
             }
-            else if(midgroundProcess != null)
+            else if(cryptionThread != null)
             {
                 SetInfoText(cancellationInfo);
             }
@@ -422,40 +422,27 @@ namespace DelfinForWindows
             button_selectImage.Enabled = false;
             button_selectZip.Enabled = false;
             button_execute.Enabled = false;
+
+            cancellationTokenSource = new();
             
             if (mode == MODE.ENCRYPT)
             {
-                midgroundProcess = new Thread(EncryptWrapper);
-                midgroundProcess.SetApartmentState(ApartmentState.STA);
-                midgroundProcess.Start(new Tuple<string, string, string>(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text));
+                cryptionThread = new Thread(() => Encrypt(openFileDialog_image.FileName, openFileDialog_zip.FileName, textBox_password.Text, cancellationTokenSource.Token));
+                cryptionThread.SetApartmentState(ApartmentState.STA);
+                cryptionThread.Start();
             }
             else if (mode == MODE.DECRYPT)
             {
-                midgroundProcess = new Thread(DecryptWrapper);
-                midgroundProcess.SetApartmentState(ApartmentState.STA);
-                midgroundProcess.Start(new Tuple<string, string>(openFileDialog_image.FileName, textBox_password.Text));
+                cryptionThread = new Thread(() => Decrypt(openFileDialog_image.FileName, textBox_password.Text, cancellationTokenSource.Token));
+                cryptionThread.SetApartmentState(ApartmentState.STA);
+                cryptionThread.Start();
             }
         }
 
         // resets the form and kills any background threads
         private void Button_cancel_Click(object sender, EventArgs e)
         {
-            // kill the background process if there is one
-            if(backgroundProcess != null && backgroundProcess.IsAlive)
-            {
-                ShowMessage("Cancellation is temporarily unavailable. Please wait for a future release.", "Cannot cancel");
-                // backgroundProcess.Abort();
-            }
-
-            //// inform user
-            //if (mode == MODE.ENCRYPT)
-            //{
-            //    UpdateFeed("The encryption was cancelled.");
-            //}
-            //else if (mode == MODE.DECRYPT)
-            //{
-            //    UpdateFeed("The decryption was cancelled.");
-            //}
+            cancellationTokenSource?.Cancel();
 
             InitializeStateAndButtons();
         }
@@ -474,7 +461,7 @@ namespace DelfinForWindows
 
         private void PictureBox_delfin_DoubleClick(object sender, EventArgs e)
         {
-            if (backgroundProcess == null)
+            if (cryptionThread == null)
             {
                 return;
             }
@@ -527,71 +514,60 @@ namespace DelfinForWindows
             MessageBox.Show(text, caption);
         }
 
-        // string imgName, string password
-        private void Decrypt(object args)
-        {
-            var input = (Tuple<string, string>)args;
-            string imgName = input.Item1;
-            string password = input.Item2;
-
-            string saveFilename = saveFileDialog_zip.ShowDialog() == DialogResult.OK
-                ? saveFileDialog_zip.FileName
-                : "";
-
-            Cryptor.Decrypt(imgName, password, saveFilename, (result) => ProcessResult(result, MODE.DECRYPT));
-        }
-
-        // string imgName, string fileName, string password
-        private void Encrypt(object args)
-        {
-            var input = (Tuple<string, string, string>)args;
-            string imgName = input.Item1;
-            string fileName = input.Item2;
-            string password = input.Item3;
-
-            string saveFilename = saveFileDialog_image.ShowDialog() == DialogResult.OK
-                ? saveFileDialog_image.FileName
-                : "";
-
-            Cryptor.Encrypt(imgName, fileName, password, saveFilename, (result) => ProcessResult(result, MODE.ENCRYPT));
-        }
-
-        // called on its own thread to manage a decryption
-        private void DecryptWrapper(object args)
+        private void Decrypt(string imgName, string password, CancellationToken token)
         {
             UpdateFeed($"Decrypting {openFileDialog_image.FileName.ShortFileName()}...");
-            //Decrypt(args);
-            backgroundProcess = new Thread(Decrypt);
-            backgroundProcess.SetApartmentState(ApartmentState.STA);
-            backgroundProcess.Start(args);
+
+            string saveFilename;
+            if (saveFileDialog_zip.ShowDialog() == DialogResult.OK)
+            {
+                saveFilename = saveFileDialog_zip.FileName;
+            }
+            else
+            {
+                ProcessResult(false, "Cancelled operation", "Saving the result was cancelled.", MODE.DECRYPT);
+                return;
+            }
+
+            Cryptor.Decrypt(imgName, password, saveFilename, (result) => ProcessResult(result, MODE.DECRYPT), token);
         }
 
-        // called on its own thread to manage an encryption
-        private void EncryptWrapper(object args)
+        private void Encrypt(string imgName, string filename, string password, CancellationToken token)
         {
             UpdateFeed($"Encrypting {openFileDialog_zip.FileName.ShortFileName()} into {openFileDialog_image.FileName.ShortFileName()}...");
-            //Encrypt(args);
-            backgroundProcess = new Thread(Encrypt);
-            backgroundProcess.SetApartmentState(ApartmentState.STA);
-            backgroundProcess.Start(args);
+
+            string saveFilename;
+            if (saveFileDialog_image.ShowDialog() == DialogResult.OK)
+            {
+                saveFilename = saveFileDialog_image.FileName;
+            }
+            else
+            {
+                ProcessResult(false, "Cancelled operation", "Saving the result was cancelled.", MODE.ENCRYPT);
+                return;
+            }
+
+            Cryptor.Encrypt(imgName, filename, password, saveFilename, (result) => ProcessResult(result, MODE.ENCRYPT), token);
         }
 
-        private void ProcessResult(CryptionResult result, MODE mode)
+        private void ProcessResult(bool success, string errMsg, string errDescription, MODE mode)
         {
             string modeString = mode == MODE.DECRYPT ? "Decryption" : "Encryption";
-            if (result.Success)
+            if (success)
             {
                 UpdateFeed($"{modeString} successful.");
                 ShowMessage($"{modeString} successful.", "Success");
             }
             else
             {
-                UpdateFeed($"{modeString} failed. Reason: {result.ErrDescription}");
-                ShowMessage($"{modeString} failed. Reason: {result.ErrDescription}", $"{result.ErrMsg}");
+                UpdateFeed($"{modeString} failed. Reason: {errDescription}");
+                ShowMessage($"{modeString} failed. Reason: {errDescription}", $"{errMsg}");
             }
 
             InitializeStateAndButtons();
         }
+
+        private void ProcessResult(CryptionResult result, MODE mode) => ProcessResult(result.Success, result.ErrMsg, result.ErrDescription, mode);
 
         // threadsafe call to enter primary state, enabling/disabling certain buttons and setting flags
         private void InitializeStateAndButtons()
@@ -611,8 +587,9 @@ namespace DelfinForWindows
             button_execute.Enabled = false;
             button_cancel.Enabled = false;
             SetInfoText(mainWelcomeInfo);
-            midgroundProcess = null;
-            backgroundProcess = null;
+            cryptionThread = null;
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
         }
     }
 
